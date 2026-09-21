@@ -93,6 +93,9 @@ export {
   TRACK_ID_BY_FILENAME,
   TrkDecodeError,
 } from './TrkDecoder.js';
+
+export { decodeMap, MapDecodeError } from './MapDecoder.js';
+export type { TrackBackdrop, BackdropStrip } from './MapDecoder.js';
 // `TrackData` and `CenterlinePoint` are exported under aliases to avoid a clash
 // with the legacy section-4 `TrkParser` `TrackData` type.
 export type {

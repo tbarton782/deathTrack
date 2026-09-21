@@ -16,11 +16,12 @@
  * - `.SCR` full-screen images → 160×200 indices → `assets/screens/<name>.dtasset`
  * - `.BMP` / `.BLK` sprite sheets → `SpriteSheetBundle` → `assets/sprites/<name>.dtasset`
  * - `FONTS.BLK` fonts → glyph data → `assets/fonts/<name>.dtasset`
+ * - `.MAP` track horizon backdrops → strips → `assets/backdrops/<name>.dtasset`
  *
  * Deliberately **not** emitted (blocked / reclassified — see tasks.md §25):
  * `.TRK` tracks (the runtime `reconstructTrack` needs road/waypoint/pit/ramp/
  * hazard geometry the `TrkDecoder` cannot produce without inventing layouts),
- * `.TBL` (3D vector models, not stat tables), `.MAP`, and `.MUS`.
+ * `.TBL` (3D vector models, not stat tables), and `.MUS`.
  *
  * Requirements: 9.1, 9.5, 9.6
  */
@@ -34,6 +35,7 @@ import { decodePalContainer, type Palette } from './parsers/PaletteDecoder.js';
 import { decodeScr } from './parsers/ScrDecoder.js';
 import { decodeBmpFile, type SpriteSheet } from './parsers/BmpDecoder.js';
 import { decodeFonts, type Font } from './parsers/FntDecoder.js';
+import { decodeMap } from './parsers/MapDecoder.js';
 
 /** Serialise a value to UTF-8 JSON bytes, expanding typed arrays to number[]. */
 function toJsonBytes(value: unknown): Uint8Array {
@@ -177,6 +179,17 @@ export async function convertReal(
           width: image.width,
           height: image.height,
           indices: Array.from(image.indices),
+        });
+      } else if (ext === 'map') {
+        // Track horizon backdrop: N strips of EGA-index pixels.
+        const backdrop = decodeMap(bytes);
+        await writeAsset('backdrops', stem, AssetKind.Map, {
+          count: backdrop.count,
+          strips: backdrop.strips.map((s) => ({
+            width: s.width,
+            height: s.height,
+            indices: Array.from(s.indices),
+          })),
         });
       } else if (isFontContainer(bytes)) {
         // A file of FNT: chunks (e.g. FONTS.BLK) — decode before the BMP branch
