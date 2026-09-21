@@ -60,8 +60,47 @@ describe('decodeTrk (synthetic)', () => {
     ]);
     // The 4th pair (0, 5) has a decreasing distance, ending the run.
     expect(track.centerlineEnd).toBe(4 + 3 * 4);
-    expect(track.tail.length).toBe(4); // the trailing (0,5) pair
+    // No ±30-stepping road-profile records here, so the profile is empty and
+    // the tail is the trailing (0,5) pair.
+    expect(track.roadProfile).toEqual([]);
+    expect(track.roadProfileStep).toBe(0);
+    expect(track.roadProfileEnd).toBe(track.centerlineEnd);
+    expect(track.tail.length).toBe(4);
     expect(track.int16Stream.length).toBe(body.length);
+  });
+
+  it('extracts a road-profile array stepping by +30 after the centerline', () => {
+    // Centerline: (1,100). Then profile records [c0,c1,dist] stepping +30:
+    // [0,5,30] [0,7,60] [0,9,90], then a non-stepping record ends it.
+    const body = new Int16Array([1, 100, 0, 5, 30, 0, 7, 60, 0, 9, 90, 0, 0, 7]);
+    const bytes = new Uint8Array(4 + body.byteLength);
+    bytes.set([0x54, 0x52, 0x4b, 0x3a], 0);
+    for (let i = 0; i < body.length; i += 1) {
+      bytes[4 + i * 2] = body[i]! & 0xff;
+      bytes[4 + i * 2 + 1] = (body[i]! >> 8) & 0xff;
+    }
+    const track = decodeTrk(bytes);
+    expect(track.roadProfileStep).toBe(30);
+    expect(track.roadProfile).toEqual([
+      { c0: 0, c1: 5, distance: 30 },
+      { c0: 0, c1: 7, distance: 60 },
+      { c0: 0, c1: 9, distance: 90 },
+    ]);
+    // Centerline + profile + tail cover the whole file.
+    expect(track.roadProfileEnd + track.tail.length).toBe(bytes.length);
+  });
+
+  it('extracts a road-profile array stepping by -30 (negative distance axis)', () => {
+    const body = new Int16Array([1, 100, 0, 5, -30, 0, 7, -60, 0, 9, -90, 0, 0, 7]);
+    const bytes = new Uint8Array(4 + body.byteLength);
+    bytes.set([0x54, 0x52, 0x4b, 0x3a], 0);
+    for (let i = 0; i < body.length; i += 1) {
+      bytes[4 + i * 2] = body[i]! & 0xff;
+      bytes[4 + i * 2 + 1] = (body[i]! >> 8) & 0xff;
+    }
+    const track = decodeTrk(bytes);
+    expect(track.roadProfileStep).toBe(-30);
+    expect(track.roadProfile.map((p) => p.distance)).toEqual([-30, -60, -90]);
   });
 
   it('rejects a file without the TRK: tag', () => {
@@ -97,11 +136,40 @@ describe('decodeTrk against all 10 real tracks', () => {
         expect(Math.abs(track.centerline[i]!.dx)).toBeLessThanOrEqual(200);
       }
 
-      // The tail (undecoded sections) plus the centerline covers the whole file.
-      expect(track.centerlineEnd + track.tail.length).toBe(bytes.length);
+      // The decoded sections (centerline + road profile) plus the raw tail
+      // cover the whole file exactly, and offsets are ordered.
+      expect(track.roadProfileEnd).toBeGreaterThanOrEqual(track.centerlineEnd);
+      expect(track.roadProfileEnd + track.tail.length).toBe(bytes.length);
+
+      // The road-profile array, when present, steps by a consistent ±30 and its
+      // distances are exactly that arithmetic sequence.
+      if (track.roadProfile.length > 0) {
+        expect(Math.abs(track.roadProfileStep)).toBe(30);
+        for (let i = 0; i < track.roadProfile.length; i += 1) {
+          expect(track.roadProfile[i]!.distance).toBe(
+            track.roadProfile[0]!.distance + i * track.roadProfileStep,
+          );
+        }
+      } else {
+        expect(track.roadProfileStep).toBe(0);
+      }
     }
     // When the game files are present, all 10 must have been checked.
     if (checked > 0) expect(checked).toBe(TRACK_FILES.length);
+  });
+
+  it('identifies the road-profile array in most tracks', async () => {
+    let checked = 0;
+    let withProfile = 0;
+    for (const name of TRACK_FILES) {
+      const bytes = await readTrack(name);
+      if (bytes === undefined) continue;
+      checked += 1;
+      if (decodeTrk(bytes).roadProfile.length > 0) withProfile += 1;
+    }
+    // When present, the road-profile array is found in the large majority of
+    // tracks (a couple use a variant cadence and fall back to the raw tail).
+    if (checked > 0) expect(withProfile).toBeGreaterThanOrEqual(checked - 3);
   });
 });
 
