@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+packages/*/dist/
+
+# Logs
+*.log
+ptsc.log
+
+# Tools diagnostics / generated asset previews (not source)
+packages/tools/out/
+packages/tools/tsc-check.txt
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+
+# Test / coverage output
+coverage/
+*.tmp
+
+# Do NOT commit original game assets (copyrighted, not redistributable)
+# The asset pipeline reads them from an external folder at build time.
+dtrack/
+*.SCR
+*.BMP
+*.BLK
+*.TRK
+*.TBL
+*.MAP
+*.MUS

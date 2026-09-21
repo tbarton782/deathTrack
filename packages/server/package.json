@@ -1,0 +1,22 @@
+{
+  "name": "@deathtrack/server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "node --watch dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@deathtrack/shared": "*",
+    "better-sqlite3": "^11.10.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/ws": "^8.18.1"
+  }
+}

@@ -1,0 +1,2360 @@
+{
+  "pbtResults": {
+    "14.2 Write property test for reconciliation correction bounded (Property 20)": {
+      "status": "passed",
+      "lastRunTimestamp": 1789874154100
+    }
+  },
+  "executionHistory": {
+    "1.1 Initialise root `package.json` with npm workspaces (`packages/shared`, `packages/client`, `packages/server`, `packages/tools`, `tests`)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703182423
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703195018
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703377435
+      }
+    ],
+    "1.2 Configure each package's `tsconfig.json` extending the base config and set up package `build` and `test` scripts": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703182809
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703383125
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707415210
+      }
+    ],
+    "1.3 Write a smoke test that imports each package's index and asserts it loads without throwing": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183039
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784452182
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789785685211
+      }
+    ],
+    "2.1 Create `packages/shared/src/types/primitives.ts` with `Vec2`, `ParticipantId`, `ChassisId`, `TrackId`, `WeaponId`, `ComponentId`, `SessionId`, `ProjectileId`, `HazardId`, and all ID alias types": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183089
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703383691
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707415938
+      }
+    ],
+    "2.2 Create `packages/shared/src/types/physics.ts` with `CarPhysicsState`, `CarInputs`, `WorldPhysicsState`, `PhysicsStepResult`, `PhysicsEvent`, and `RNG` interface": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183123
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707419773
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784444369
+      }
+    ],
+    "2.3 Create `packages/shared/src/types/weapons.ts` with `WeaponDef`, `WeaponCategory`, `WeaponConfig`, `ActiveProjectile`, `PlacedHazard`, `WeaponStepResult`, `WeaponSystemState`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183155
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707421334
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784445165
+      }
+    ],
+    "2.4 Create `packages/shared/src/types/car.ts` with `ChassisDef`, `CarBaseStats`, `ComponentDef`, `ComponentSlot`, `EffectiveCarStats`, `CarRaceState`, `Loadout`, `ResolvedLoadout`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183190
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707421439
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784446110
+      }
+    ],
+    "2.5 Create `packages/shared/src/types/track.ts` with `TrackDef`, `RoadSegment`, `JumpRamp`, `WaypointGraph`, `WaypointNode`, `WaypointEdge`, `PitLaneData`, `HazardZone`, `SceneryObject`, `SurfaceType`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183231
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707422255
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784447098
+      }
+    ],
+    "2.6 Create `packages/shared/src/types/career.ts` with `CareerState`, `HighScoreEntry`, `SaveFile`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183263
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789707422668
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784447740
+      }
+    ],
+    "2.7 Create `packages/shared/src/types/network.ts` with `Session`, `SessionConfig`, `ParticipantInfo`, `InputFrame`, `StateSnapshot`, `CompressedCarState`, `NetworkEvent`, `JoinResult`, `SessionSummary`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183298
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784450904
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789785683113
+      }
+    ],
+    "2.8 Create `packages/shared/src/types/ai.ts` with `AIDriverConfig`, `AICharacter`, `SkillTier`, `AIDriverState`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183338
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789784451600
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789785684015
+      }
+    ],
+    "2.9 Create `packages/shared/src/index.ts` re-exporting all types; verify `tsc --noEmit` passes with zero errors": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183371
+      },
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789785688424
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863017432
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863087245
+      }
+    ],
+    "3.1 Create `packages/shared/src/codec/BinaryWriter.ts` and `BinaryReader.ts` supporting `uint8`, `uint16`, `int16`, `uint32`, `int32`, `float32`, `float64`, fixed-length `string`, and nested struct read/write": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183424
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861322148
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861593031
+      }
+    ],
+    "3.2 Create `packages/shared/src/codec/schema.ts` defining the `SchemaDescriptor` type and `createCodec<T>` factory that produces a `Codec<T>` from a field-ordered descriptor": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183458
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861596500
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861914722
+      }
+    ],
+    "3.3 Implement `CompressedCarStateCodec` using fixed-point encoding: position as `uint16` × 0.1 units, heading as `uint8` (256 steps), speed as `uint16` × 0.01, armor as `uint8`, flags as `uint8`, ammo counts as `uint8`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183488
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861919731
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789862604260
+      }
+    ],
+    "3.4 Implement `StateSnapshotCodec` wrapping an array of up to 8 `CompressedCarState` entries plus header fields (`tick`, `serverTime`, `authorityChecksum`) — total encoded size ≤ 512 bytes": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183522
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100667
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863124470
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863424650
+      }
+    ],
+    "3.5 Implement `SaveFileCodec` encoding `SaveFile` (magic `0x44545241`, version, slot, `CareerState` fields, trailing CRC32)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183569
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100706
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863451548
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863816467
+      }
+    ],
+    "3.6 Write property test for codec round-trip consistency (Property 18)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183602
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100751
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863838367
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864141119
+      }
+    ],
+    "3.7 Write property test for packet size cap (Property 19)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183632
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100789
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863839300
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864138796
+      }
+    ],
+    "3.8 Write property test for save file round-trip (Property 13)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183664
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100825
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863840948
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864139800
+      }
+    ],
+    "3.9 Write property test for PII absence (Property 25)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183697
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100870
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863841751
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864181673
+      }
+    ],
+    "4.1 Create `TrkParser.ts` reading `.TRK` track geometry: road segments, jump ramps, waypoint graph, pit lane entry/exit, hazard zones, and scenery objects; export `parseTrack(buf: Buffer): TrackData`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183730
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861921177
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789862606135
+      }
+    ],
+    "4.2 Create `MapParser.ts` reading `.MAP` minimap data; `BlkParser.ts` reading `.BLK` sprite sheet blocks; `PalParser.ts` reading `.PALS` 256-colour palette files": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183762
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861923026
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789862607607
+      }
+    ],
+    "4.3 Create `TblParser.ts` reading `.TBL` weapon and car stat tables; export typed `WeaponTable` and `ChassisTable` structures matching the design's stat definitions": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183796
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861924436
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789862609451
+      }
+    ],
+    "4.4 Create `MusParser.ts` reading OPL2/AdLib `.MUS` sequences; convert to base64-encoded OGG stubs for web audio (actual OGG conversion deferred to build step)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183830
+      },
+      {
+        "executionId": "fbb77ba8-fb28-4555-abc9-2726e62d001e",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789861925797
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789862610843
+      }
+    ],
+    "4.5 Create `ScrParser.ts` reading `.SCR` full-screen images; decode to RGBA `Uint8ClampedArray` with palette application": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183861
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100904
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863122254
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863425870
+      }
+    ],
+    "4.6 Implement `packages/tools/src/cli.ts` entry point that walks an input directory, invokes all parsers, writes binary assets to `assets/` using `SaveFileCodec`-style encoding, and logs parse errors with track name and byte offset": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183894
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863100946
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863451764
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863818024
+      }
+    ],
+    "4.7 Write property test for track file round-trip (Property 23)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183927
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101005
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864202276
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870340888
+      }
+    ],
+    "5. Checkpoint — Verify codec and parser foundations": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183961
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101041
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874975540
+      }
+    ],
+    "6.1 Create `packages/shared/src/physics/rng.ts` implementing a seeded xorshift64 RNG satisfying the `RNG` interface — no `Math.random()` calls; export `mkRNG(seed: number): RNG`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703183993
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101079
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863130854
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863422682
+      }
+    ],
+    "6.2 Create `packages/shared/src/physics/stepPhysics.ts` implementing the pure `stepPhysics(state, inputs, dt, rng): PhysicsStepResult` function at a fixed 1/60 s timestep": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184027
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101114
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863843368
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864142404
+      }
+    ],
+    "6.3 Add collision resolution to `stepPhysics`: compute impulse for car pairs with relative velocity > 0.5 units/s; resolve multiple collisions on the same car in decreasing-velocity order": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184063
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101149
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864203304
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870337305
+      }
+    ],
+    "6.4 Add jump ramp mechanics to `stepPhysics`: on ramp contact set `airborne = true`, compute vertical launch velocity from ramp angle and car speed; apply gravity each tick until surface level": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184099
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101185
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870366825
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870616718
+      }
+    ],
+    "6.5 Add pit lane detection and restoration: when car enters pit lane coordinates set `currentArmor = maxArmor` and reload all ammo; ensure restoration completes before car exits": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184131
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101220
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870617974
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870891799
+      }
+    ],
+    "6.6 Write property test for physics speed bounds (Property 1)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184164
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101277
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870902749
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871480799
+      }
+    ],
+    "6.7 Write property test for off-track traction penalty (Property 2)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184195
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101327
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871521522
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871756083
+      }
+    ],
+    "6.8 Write property test for physics determinism (Property 3)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184229
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101362
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870904131
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871479786
+      }
+    ],
+    "6.9 Write property test for collision momentum conservation (Property 4)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184262
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101402
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870905109
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871511370
+      }
+    ],
+    "6.10 Write property test for pit lane full restore (Property 22)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184295
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101438
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871522552
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871773305
+      }
+    ],
+    "7.1 Create `packages/shared/src/weapons/WeaponSystem.ts` with `stepWeapons(state, carStates, dt): WeaponStepResult`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184328
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101477
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870900399
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871477385
+      }
+    ],
+    "7.2 Add projectile round-trip validation per Requirement 3.10: before transmitting a projectile packet, encode–decode it and reject if any field differs": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184364
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101513
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872116254
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872424062
+      }
+    ],
+    "7.3 Write property test for exact weapon damage per hit (Property 5)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184398
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101550
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872453885
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872795709
+      }
+    ],
+    "7.4 Write property test for ammo count bounds (Property 6)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184430
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101587
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872454861
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872798130
+      }
+    ],
+    "8.1 Create `packages/shared/src/loadout/LoadoutService.ts` with:": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184462
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101641
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864208417
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870338668
+      }
+    ],
+    "8.2 Write property test for weapon slot invariant (Property 7)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184523
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101678
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871523880
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871757105
+      }
+    ],
+    "8.3 Write property test for loadout effective stats additive and capped (Property 8)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184557
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101714
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871524898
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871758521
+      }
+    ],
+    "8.4 Write property test for loadout immutability during race (Property 9)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184588
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101750
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871525835
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871759822
+      }
+    ],
+    "8.5 Create `packages/shared/src/career/CareerService.ts` with:": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184621
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101788
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870901798
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871478755
+      }
+    ],
+    "8.6 Write property test for prize money formula (Property 10)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184654
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101828
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871780071
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872091019
+      }
+    ],
+    "8.7 Write property test for career money non-negative and atomic (Property 11)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184686
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101870
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871781379
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872092458
+      }
+    ],
+    "8.8 Write property test for high-score table sorted and capped (Property 12)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184722
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101908
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871782449
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872093567
+      }
+    ],
+    "9. Checkpoint — Verify shared logic": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184755
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101945
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874976469
+      }
+    ],
+    "10.1 Create `packages/shared/src/ai/WaypointNavigator.ts`: build waypoint graph from `TrackDef`; compute next waypoint for a car position; select racing line based on aggression 1–5": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184788
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863101982
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872114889
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872425467
+      }
+    ],
+    "10.2 Create `packages/shared/src/ai/AIBrain.ts` with `computeAIInputs(driver, world, config, rng): CarInputs`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184822
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102022
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872456222
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872794314
+      }
+    ],
+    "10.3 Write property test for AI firing probability convergence (Property 14)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184861
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102059
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872844249
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873271504
+      }
+    ],
+    "10.4 Write property test for AI lap time variation (Property 15)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184895
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102122
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872845575
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873272780
+      }
+    ],
+    "11.1 Create `packages/shared/src/persistence/SaveManager.ts`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184931
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102159
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864209289
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870339622
+      }
+    ],
+    "12.1 Create `packages/server/src/session/SessionManager.ts` implementing `createSession`, `joinSession`, `listOpenSessions`, `transferHost`, and `closeSession` backed by an in-process `Map<SessionId, Session>`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184966
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102199
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872113041
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872427362
+      }
+    ],
+    "12.2 Write property test for session config validation (Property 16)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703184998
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102236
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872457589
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872798242
+      }
+    ],
+    "12.3 Write property test for host transfer preserves one host (Property 17)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185033
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102272
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872459037
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872799005
+      }
+    ],
+    "12.4 Create `packages/server/src/network/ServerNetworkManager.ts`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185065
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102310
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872846964
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873273671
+      }
+    ],
+    "12.5 Create `packages/server/src/AuthorityLoop.ts`: run physics at 60 Hz via `setImmediate`; broadcast state snapshot at 20 Hz; inject AI inputs via `computeAIInputs` for AI slots; apply received player inputs": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185101
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102346
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873441015
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873967266
+      }
+    ],
+    "12.6 Write property test for stale weapon events discarded cleanly (Property 21)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185135
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102385
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873447635
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873968377
+      }
+    ],
+    "12.7 Create `packages/server/src/http/MatchmakingRouter.ts` with REST endpoints: `POST /sessions` (create), `GET /sessions` (list open), `POST /sessions/:id/join`, `DELETE /sessions/:id` (host close)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185168
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102436
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874023341
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874314622
+      }
+    ],
+    "12.8 Create `packages/server/src/index.ts` entry point wiring together HTTP server, WebSocket server (`ws` library), `SessionManager`, `AuthorityLoop`, and `ServerNetworkManager`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185202
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102475
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874364218
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874913416
+      }
+    ],
+    "13. Checkpoint — Verify server builds and session/network tests pass": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185236
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102510
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874977519
+      }
+    ],
+    "14.1 Create `packages/client/src/network/NetworkManager.ts`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185271
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102547
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873444697
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873961156
+      }
+    ],
+    "14.2 Write property test for reconciliation correction bounded (Property 20)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185306
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102585
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874024294
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874315566
+      }
+    ],
+    "15.1 Create `packages/client/src/renderer/Renderer.ts` initialising a `PIXI.Application` with `WebGLRenderer`; set up eight draw layers: road surface, track boundaries, scenery, hazards, cars, projectiles, explosions, HUD": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185339
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102622
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874026325
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874317293
+      }
+    ],
+    "15.2 Implement scanline-based pseudo-3D road rendering: for each screen row compute world-space depth; sample road/scenery tiles from the track texture atlas; camera fixed 150–300 px behind and 60–120 px above leading car": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185371
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102666
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874366110
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874914720
+      }
+    ],
+    "15.3 Implement palette emulation WebGL fragment shader: 256×1 RGBA texture uniform for palette lookup; apply to all indexed-palette sprites and road surfaces": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185404
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102703
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874984160
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789875554405
+      }
+    ],
+    "15.4 Implement car sprite rendering with depth-based scale and vertical offset; airborne scaling 100%–150% and 0–80 px vertical offset proportional to jump height": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185462
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102740
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789875561411
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877063949
+      }
+    ],
+    "15.5 Implement explosion animation: play on `Elimination` event at last-known car position for 500–1500 ms; remove car sprite on completion": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185497
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102776
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877073373
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877351555
+      }
+    ],
+    "15.6 Implement adaptive LOD: monitor rolling average FPS over 5 s; if sustained < 30 fps for > 2 s, reduce scenery draw distance by 25% increments down to 20% minimum": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185533
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102815
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877353346
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877707141
+      }
+    ],
+    "15.7 Implement `Renderer.render(state: RenderState, alpha: number)` integrating all layers; wire to `requestAnimationFrame` game loop at 60 fps": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185566
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102851
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877714977
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880957999
+      }
+    ],
+    "16.1 Create `packages/client/src/audio/AudioSystem.ts` with 8 `AudioChannel` slots backed by Web Audio API; implement `playSFX(id)` evicting the channel with smallest remaining duration when all 8 are active; implement `playMusic(context)` fading to new track within 500 ms": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185598
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102920
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874368012
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874916619
+      }
+    ],
+    "16.2 Wire SFX triggers: weapon fire (≤50 ms), car elimination (≤50 ms), jump launch (≤50 ms)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185632
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102956
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789875562852
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877065326
+      }
+    ],
+    "16.3 Implement music/SFX toggle: `setMusicEnabled` and `setSFXEnabled` apply within one rendered frame; wire to settings screen toggle controls": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185668
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863102992
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789875564193
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877066727
+      }
+    ],
+    "16.4 Write property test for audio channel count never exceeds 8 (Property 24)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185703
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103036
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877716000
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880959368
+      }
+    ],
+    "17.1 Create `packages/client/src/ui/HUD.tsx` (PixiJS Container overlay) displaying: speed, armor level, per-weapon ammo counts, current lap, placement position, and homing-weapon warning indicator": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185738
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103072
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877717851
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880961250
+      }
+    ],
+    "17.2 Create `packages/client/src/ui/RaceResults.tsx` listing all participants' final placement, elimination count, and prize money earned": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185774
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103119
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874370765
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874918023
+      }
+    ],
+    "17.3 Create `packages/client/src/ui/MainMenu.tsx` with buttons for: Start Career, Host Session, Join Session, View High Scores, Settings": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185808
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103165
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874369420
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874919138
+      }
+    ],
+    "17.4 Create `packages/client/src/ui/Settings.tsx` with controls for: display resolution, audio volume sliders, key binding configuration, and network options": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185845
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103203
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877719263
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880962646
+      }
+    ],
+    "17.5 Create `packages/client/src/ui/PauseMenu.tsx`: pause overlay with Resume and Quit; continue simulation for remote participants; broadcast pause notification to session": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185885
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103246
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789877720301
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880964554
+      }
+    ],
+    "17.6 Create `packages/client/src/ui/CompetitorInfo.tsx` displaying portraits and bio text for all nine AI driver characters; load portrait images from parsed `.SCR` assets": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185922
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103289
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880972050
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881362444
+      }
+    ],
+    "17.7 Create `packages/client/src/ui/CarConfig.tsx` for car and loadout configuration: chassis picker, component slots showing per-stat delta and resulting effective stat, weapon slot pickers with owned-only filtering": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185955
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103335
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880973486
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881359176
+      }
+    ],
+    "17.8 Create `packages/client/src/ui/Shop.tsx` showing component and weapon catalogue entries with name, effect, price; display exact shortfall when insufficient funds; call `CareerService.purchaseItem`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703185989
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103372
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880974901
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881361034
+      }
+    ],
+    "17.9 Create `packages/client/src/ui/SessionBrowser.tsx` fetching `GET /sessions`; display name, track, current/max players; indicate full sessions; join button calling `POST /sessions/:id/join`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186025
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103408
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880976803
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881364336
+      }
+    ],
+    "17.10 Create `packages/client/src/ui/Lobby.tsx`: show all participant loadouts and ready status; ready-up button; start race button (host only, enabled when all ready and min count met); display session password prompt for protected sessions": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186059
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103446
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880978002
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881366175
+      }
+    ],
+    "17.11 Create `packages/client/src/ui/HighScores.tsx` reading saved high-score table; display top 10 entries sorted by total earnings; entry form for player name (1–12 chars) on new career completion": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186095
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103484
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881375666
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881658592
+      }
+    ],
+    "17.12 Create `packages/client/src/ui/BrowserWarning.tsx`: detect browser and version at startup; show message identifying browser and minimum supported versions if unsupported; block game loop from starting": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186127
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103523
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881377113
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881660524
+      }
+    ],
+    "18.1 Create `packages/shared/src/assets/AssetLoader.ts` implementing the `AssetLoader` interface: `loadTrack`, `loadCarSprites`, `loadWeaponTable`, `loadMusicTrack`; fetch pre-converted binary bundles from the `assets/` directory; complete track parsing within 5 s; throw typed `TrackLoadError` on failure": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186162
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103567
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873443354
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873963508
+      }
+    ],
+    "18.2 Create `packages/shared/src/assets/SpriteSheetLoader.ts`: decode `.BLK`-derived binary sprite sheets into `PIXI.Spritesheet` compatible JSON atlas + `Uint8ClampedArray` pixel data with palette applied": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186197
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103603
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873446594
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873965367
+      }
+    ],
+    "19.1 Create `packages/client/src/GameLoop.ts`: `requestAnimationFrame` loop running at 60 fps; each frame: read input, run local prediction via `stepPhysics`, call `NetworkManager.sendInput`, call `NetworkManager.getInterpolatedState`, call `Renderer.render`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186232
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103642
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881671131
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789882042747
+      }
+    ],
+    "19.2 Create `packages/client/src/InputHandler.ts`: listen to `keydown`/`keyup` events; map configurable key bindings to `CarInputs`; produce `InputFrame` with current tick and CRC32 of prior local state": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186266
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103681
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881669658
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789882044660
+      }
+    ],
+    "19.3 Create `packages/client/src/App.tsx` (or `main.ts`) as client entry point: initialise PixiJS app, `AssetLoader`, `AudioSystem`, `NetworkManager`; render the appropriate UI screen based on application state machine (`mainMenu → carConfig → lobby → race → results → career`)": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186331
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103743
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789882051501
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918335252
+      }
+    ],
+    "20. Checkpoint — Verify full client build with renderer, audio, and UI": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186361
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103779
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918348066
+      }
+    ],
+    "21.1 Create `packages/client/src/career/CareerController.ts` orchestrating the single-player flow: new career → car config → race → results → shop → next race; call `CareerService.computePrizeMoney`, `CareerService.purchaseItem`, `CareerService.advanceCircuit`; auto-save within 5 s after each race via `SaveManager`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186395
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103817
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918349611
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918623436
+      }
+    ],
+    "21.2 Implement career save slot management in `CareerController`: list slots on menu; prompt confirmation before overwriting occupied slot; display `CorruptSaveError` screen offering fresh start without overwriting": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186430
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103855
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918628806
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918937652
+      }
+    ],
+    "22.1 Create `packages/client/src/multiplayer/MultiplayerController.ts` managing the host path: create session via REST, wait in lobby, start race when all ready; and the join path: browse sessions, enter password if required, sync state on join (within 2 s), enter lobby": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186466
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103900
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918630117
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918939423
+      }
+    ],
+    "22.2 Wire disconnection handling in `MultiplayerController`: display `ParticipantLeft` notifications to remaining players within 3 s; handle host-transfer notification; show \"host has paused\" banner on pause event": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186499
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103939
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918959626
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789919399781
+      }
+    ],
+    "23.1 Write full race simulation integration test: spin up server and 2 `NetworkManager` clients in-process; run a 2-lap race to completion; assert final placements are assigned 1 and 2, prize money matches formula": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186535
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863103977
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789928737248
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789932235799
+      }
+    ],
+    "23.2 Write multiplayer sync integration test: simulate 10% packet loss over a 30-second in-process race with 2 clients; assert all clients end with the same car positions within 1 m / 5°": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186570
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863104016
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789928739112
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789932237266
+      }
+    ],
+    "23.3 Write career save/load integration test: construct a `CareerState`, save to a temp file, reload, assert all persisted fields are equal": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186604
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863104057
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789919452367
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789928735820
+      }
+    ],
+    "23.4 Write asset pipeline integration test: for each of the 10 track definitions in the converted `assets/` directory, call `AssetLoader.loadTrack` and assert no parse error is thrown and `waypointGraph.nodes.length > 0`": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186640
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863104101
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789928740640
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789932238798
+      }
+    ],
+    "24. Final checkpoint — All tests pass end to end": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789703186687
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863104142
+      },
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789932284590
+      }
+    ],
+    "1. Scaffold monorepo and toolchain": [
+      {
+        "executionId": "b5553ed0-5fe0-497d-93bb-53e77a92b731",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789785685252
+      }
+    ],
+    "2. Define domain types in `packages/shared`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789863087285
+      }
+    ],
+    "3. Implement binary codec in `packages/shared/src/codec/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789864181718
+      }
+    ],
+    "11. Implement save/load system in `packages/shared/src/persistence/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870339666
+      }
+    ],
+    "4. Implement asset parsers in `packages/tools/src/parsers/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789870340928
+      }
+    ],
+    "6. Implement RNG and physics engine in `packages/shared/src/physics/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789871773353
+      }
+    ],
+    "8. Implement loadout and career logic in `packages/shared/src/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872093605
+      }
+    ],
+    "7. Implement weapon system in `packages/shared/src/weapons/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789872798179
+      }
+    ],
+    "10. Implement AI driver in `packages/shared/src/ai/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873272821
+      }
+    ],
+    "18. Implement asset loader in `packages/shared/src/assets/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789873965423
+      }
+    ],
+    "14. Implement client network manager in `packages/client/src/network/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874315614
+      }
+    ],
+    "12. Implement game server infrastructure in `packages/server/src/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789874913482
+      }
+    ],
+    "15. Implement renderer in `packages/client/src/renderer/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880958062
+      }
+    ],
+    "16. Implement audio system in `packages/client/src/audio/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789880959415
+      }
+    ],
+    "17. Implement HUD and UI screens in `packages/client/src/ui/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789881660567
+      }
+    ],
+    "19. Wire client game loop in `packages/client/src/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918335466
+      }
+    ],
+    "21. Implement career mode single-player flow": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789918937711
+      }
+    ],
+    "22. Implement multiplayer session flow in `packages/client/src/multiplayer/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789919399852
+      }
+    ],
+    "23. Integration tests in `tests/`": [
+      {
+        "executionId": "e7c0e74e-f9f3-44e8-86c1-aeef7ed591aa",
+        "chatSessionId": "sess_f405cce7-6883-4405-86e3-3145690ed761",
+        "timestamp": 1789932238841
+      }
+    ]
+  }
+}
