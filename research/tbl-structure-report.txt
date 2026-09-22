@@ -1,0 +1,13 @@
+ANGEL.TBL: 1690 bytes, version=0x0000, marker=0x38, 20 records, offsets 0x3a..0x2e0
+CRIMSON.TBL: 2092 bytes, version=0x0000, marker=0x3a, 30 records, offsets 0x4e..0x3c5
+LURKER.TBL: 1621 bytes, version=0x0000, marker=0x38, 18 records, offsets 0x36..0x2c6
+MANIAC.TBL: 1909 bytes, version=0x0000, marker=0x39, 20 records, offsets 0x3a..0x37b
+MEGA.TBL: 1668 bytes, version=0x0000, marker=0x30, 17 records, offsets 0x34..0x304
+MELISSA.TBL: 1709 bytes, version=0x0000, marker=0x38, 19 records, offsets 0x38..0x2e7
+MENACE.TBL: 1690 bytes, version=0x0000, marker=0x30, 19 records, offsets 0x38..0x2d4
+MYCAR0.TBL: 1756 bytes, version=0x0000, marker=0x3e, 23 records, offsets 0x40..0x2c1
+MYCAR1.TBL: 1974 bytes, version=0x0000, marker=0x3b, 22 records, offsets 0x3e..0x3b0
+MYCAR2.TBL: 2012 bytes, version=0x0000, marker=0x36, 26 records, offsets 0x46..0x36f
+SHAPE.TBL: NOT a per-car .TBL container (offset table not strictly increasing (0x0 after 0xa0) (at byte offset 32))
+SLY.TBL: 1656 bytes, version=0x0000, marker=0x3b, 18 records, offsets 0x36..0x2cd
+WRECKER.TBL: 1412 bytes, version=0x0000, marker=0x3b, 16 records, offsets 0x32..0x2a2

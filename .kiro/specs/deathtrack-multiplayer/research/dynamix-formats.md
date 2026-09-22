@@ -255,12 +255,37 @@ Reverse-engineer from bytes; layout TBD. Verify the decoder against **all 10 tra
 
 The overhead minimap data. Reverse-engineer from bytes; layout TBD.
 
-### 7.3 `.TBL` — stat tables — **layout TBD**
+### 7.3 `.TBL` — per-car / shape-library container — **structure decoded (record interiors TBD)**
 
-The diagnostic showed `.TBL` files lead with **binary count/version words** (e.g.
-`00 00 01 00`), i.e. there is **no ASCII magic** at the start. They may or may not be
-wrapped in a chunk container. Reverse-engineer from bytes; layout TBD. Verify against real
-tables such as `ANGEL.TBL`, `SLY.TBL`, etc.
+`.TBL` files lead with **binary version/flags words** (`00 00 01 00 …`), i.e. there is
+**no ASCII magic** and they are **not** chunk-wrapped. They are **not** the numeric
+stat tables section 4 assumed — the per-character files hold the cars' 3D vector-mesh
+geometry (see `SHAPE.TBL`, the 78 KB shared shape library).
+
+**Confirmed structure of a per-car `.TBL`** (verified across all 12 real files —
+`ANGEL`, `CRIMSON`, `LURKER`, `MANIAC`, `MEGA`, `MELISSA`, `MENACE`, `MYCAR0-2`,
+`SLY`, `WRECKER`):
+
+- a fixed header whose first `uint16` is a version/flags word (`0x0000` in every file)
+  and whose byte at `0x10` is a small record-region marker;
+- at byte **`0x1e`**, a **`0xffff`-terminated array of `uint16` file offsets**. In every
+  file these offsets are strictly increasing and land inside `[0, byteLength)`; they
+  partition the file body into a sequence of variable-length **records** (each record
+  runs from its offset to the next, the last to EOF). Decoding is exact: the records tile
+  the body contiguously with no gaps or overlaps.
+
+`SHAPE.TBL` is a **larger offset-indexed container** of the same family (a leading table
+of monotonically-increasing offsets, stored `uint16`-in-low-half-of-4-bytes, then the
+referenced record data) — it is **not** a per-car file and does not use the `0x1e`
+per-car table layout.
+
+**Decoded, not invented:** `packages/tools/src/parsers/RealTblDecoder.ts` decodes the
+per-car header + offset table + record byte-slices (CLI: `deathtrack-tools --tbl <dir>`;
+committed structural report at `research/tbl-structure-report.txt`). The **meaning of the
+bytes inside each record** (mesh vertices / face lists / attribute blocks) is left
+**opaque** — it is not recoverable from the bytes without inventing structure, which these
+notes forbid. There are **no numeric car/weapon stat fields** in these files, confirming
+the recreation's `CHASSIS_CATALOGUE`/`WEAPON_CATALOGUE` are authored design data.
 
 ### 7.4 Filename → `trackId` map
 

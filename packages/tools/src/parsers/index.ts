@@ -96,6 +96,15 @@ export {
 
 export { decodeMap, MapDecodeError } from './MapDecoder.js';
 export type { TrackBackdrop, BackdropStrip } from './MapDecoder.js';
+
+export {
+  decodeRealTbl,
+  summarizeRealTbl,
+  RealTblDecodeError,
+  TBL_OFFSET_TABLE_START,
+  TBL_OFFSET_TABLE_TERMINATOR,
+} from './RealTblDecoder.js';
+export type { RealTbl, RealTblRecord } from './RealTblDecoder.js';
 // `TrackData` and `CenterlinePoint` are exported under aliases to avoid a clash
 // with the legacy section-4 `TrkParser` `TrackData` type.
 export type {

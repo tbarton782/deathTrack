@@ -383,7 +383,49 @@ export async function run(
 export async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
   const useReal = argv.includes('--real');
   const useProbe = argv.includes('--probe');
+  const useTbl = argv.includes('--tbl');
   const positional = argv.filter((a) => !a.startsWith('--'));
+
+  if (useTbl) {
+    // Real `.TBL` structure probe (section 25.8): decode every `.TBL` in
+    // <inputDir> into its confirmed offset-indexed record structure (header +
+    // 0xffff-terminated uint16 offset table + record slices) and print a
+    // one-line structural summary per file. Record interiors are left opaque
+    // (their field semantics are not reverse-engineered). Optional second arg
+    // writes the report to a file instead of stdout.
+    const [inputDir, reportFile] = positional;
+    if (!inputDir) {
+      console.error('Usage: deathtrack-tools --tbl <inputDir> [reportFile]');
+      return 2;
+    }
+    const { promises: fsp } = await import('node:fs');
+    const path = await import('node:path');
+    const { decodeRealTbl, summarizeRealTbl, RealTblDecodeError } = await import(
+      './parsers/RealTblDecoder.js'
+    );
+    const entries = (await fsp.readdir(inputDir)).filter((f) => /\.TBL$/i.test(f)).sort();
+    const lines: string[] = [];
+    let failures = 0;
+    for (const name of entries) {
+      const bytes = new Uint8Array(await fsp.readFile(path.join(inputDir, name)));
+      try {
+        lines.push(summarizeRealTbl(name, decodeRealTbl(bytes)));
+      } catch (err) {
+        failures += 1;
+        const msg = err instanceof RealTblDecodeError ? err.message : String(err);
+        lines.push(`${name}: NOT a per-car .TBL container (${msg})`);
+      }
+    }
+    const text = `${lines.join('\n')}\n`;
+    if (reportFile) {
+      await fsp.writeFile(reportFile, text, 'utf8');
+      console.log(`[tbl] wrote ${entries.length} .TBL report(s) to ${reportFile}`);
+    } else {
+      console.log(text);
+    }
+    // Non-zero only if NO file decoded (a mixed folder with SHAPE.TBL is fine).
+    return entries.length > 0 && failures === entries.length ? 1 : 0;
+  }
 
   if (useProbe) {
     // Chunk-tree probe (section 25.3): walk <inputDir> and record every file's
@@ -409,7 +451,7 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<numb
 
   const [inputDir, outputDir] = positional;
   if (!inputDir || !outputDir) {
-    console.error('Usage: deathtrack-tools [--real|--probe] <inputDir> <outputDir>');
+    console.error('Usage: deathtrack-tools [--real|--probe|--tbl] <inputDir> <outputDir>');
     return 2;
   }
   if (useReal) {

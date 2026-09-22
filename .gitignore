@@ -27,6 +27,7 @@ coverage/
 # Do NOT commit original game assets (copyrighted, not redistributable)
 # The asset pipeline reads them from an external folder at build time.
 dtrack/
+old_original_game_files/
 *.SCR
 *.BMP
 *.BLK
