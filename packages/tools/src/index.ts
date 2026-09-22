@@ -18,3 +18,12 @@ export {
 } from './realPipeline.js';
 
 export { AssetKind, encodeAsset, decodeAsset } from './cli.js';
+
+export {
+  probeChunkDir,
+  reportFile,
+  buildChunkReport,
+  formatChunkReport,
+  type FileChunkReport,
+  type ChunkReportNode,
+} from './chunkProbe.js';

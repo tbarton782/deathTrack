@@ -1,0 +1,405 @@
+10.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 17825822 bytes but only 420 remain in parent (at byte offset 4)
+
+11.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 6553630 bytes but only 420 remain in parent (at byte offset 4)
+
+12.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 13107230 bytes but only 420 remain in parent (at byte offset 4)
+
+13.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 18284574 bytes but only 420 remain in parent (at byte offset 4)
+
+14.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 28966942 bytes but only 420 remain in parent (at byte offset 4)
+
+15.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 29294622 bytes but only 420 remain in parent (at byte offset 4)
+
+16.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 30015518 bytes but only 420 remain in parent (at byte offset 4)
+
+17.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 28901406 bytes but only 420 remain in parent (at byte offset 4)
+
+3.RCT  (428 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 39)
+
+4.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 2424842 bytes but only 420 remain in parent (at byte offset 4)
+
+5.RCT  (428 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x44 (at byte offset 19)
+
+6.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 31588382 bytes but only 420 remain in parent (at byte offset 4)
+
+7.RCT  (428 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0xff (at byte offset 41)
+
+8.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 13107230 bytes but only 420 remain in parent (at byte offset 4)
+
+9.RCT  (428 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0xff (at byte offset 41)
+
+ACTIVISI  (3004 bytes)
+  PAL: container len=306 @0x0
+    EGA: leaf len=128 @0x8
+    CGA: leaf len=162 @0x90
+  SCR: container len=2682 @0x13a
+    BIN: leaf len=2674 @0x142
+
+ANGEL.BMP  (3249 bytes)
+  BMP: container len=3241 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3219 @0x16
+
+ANGEL.TBL  (1690 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+BAY_AREA.BMP  (2554 bytes)
+  BMP: container len=2546 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2524 @0x16
+
+BAY_AREA.MAP  (7827 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+BAY_AREA.TRK  (10558 bytes)
+  [not a chunk tree] chunk "TRK" declares 13697040 bytes but only 10550 remain in parent (at byte offset 4)
+
+BITMAPS.BLK  (19380 bytes)
+  BMP: container len=1578 @0x0
+    INF: leaf len=74 @0x8
+    BIN: leaf len=1488 @0x5a
+  BMP: container len=6680 @0x632
+    INF: leaf len=54 @0x63a
+    BIN: leaf len=6610 @0x678
+  BMP: container len=5679 @0x2052
+    INF: leaf len=82 @0x205a
+    BIN: leaf len=5581 @0x20b4
+  BMP: container len=703 @0x3689
+    INF: leaf len=66 @0x3691
+    BIN: leaf len=621 @0x36db
+  BMP: container len=4700 @0x3950
+    INF: leaf len=46 @0x3958
+    BIN: leaf len=4638 @0x398e
+
+BOSTON.BMP  (3369 bytes)
+  BMP: container len=3361 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3339 @0x16
+
+BOSTON.MAP  (4005 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+BOSTON.TRK  (8216 bytes)
+  [not a chunk tree] chunk "TRK" declares 65547 bytes but only 8208 remain in parent (at byte offset 4)
+
+CAR1.SCR  (6926 bytes)
+  SCR: container len=6918 @0x0
+    BIN: leaf len=6910 @0x8
+
+CAR2.SCR  (9361 bytes)
+  SCR: container len=9353 @0x0
+    BIN: leaf len=9345 @0x8
+
+CAR3.SCR  (6143 bytes)
+  SCR: container len=6135 @0x0
+    BIN: leaf len=6127 @0x8
+
+CHAMP.BMP  (6136 bytes)
+  BMP: container len=6128 @0x0
+    INF: leaf len=22 @0x8
+    BIN: leaf len=6090 @0x26
+
+CHICAGO.BMP  (3517 bytes)
+  BMP: container len=3509 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3487 @0x16
+
+CHICAGO.MAP  (7386 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+CHICAGO.TRK  (8738 bytes)
+  [not a chunk tree] chunk "TRK" declares 131089 bytes but only 8730 remain in parent (at byte offset 4)
+
+CITYLINE.BMP  (2811 bytes)
+  BMP: container len=2803 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2781 @0x16
+
+CITYPIC.SCR  (12139 bytes)
+  SCR: container len=12131 @0x0
+    BIN: leaf len=12123 @0x8
+
+CONTROL.HLP  (679 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x65 (at byte offset 3)
+
+CRIMSON.BMP  (2445 bytes)
+  BMP: container len=2437 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2415 @0x16
+
+CRIMSON.TBL  (2092 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+DANGER.MUS  (1853 bytes)
+  SND: leaf len=1845 @0x0
+
+DASH0.SCR  (5405 bytes)
+  SCR: container len=5397 @0x0
+    BIN: leaf len=5389 @0x8
+
+DASH1.SCR  (5581 bytes)
+  SCR: container len=5573 @0x0
+    BIN: leaf len=5565 @0x8
+
+DASH2.SCR  (5488 bytes)
+  SCR: container len=5480 @0x0
+    BIN: leaf len=5472 @0x8
+
+DTRACK.EXE  (177687 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+DYNAMIX.BMP  (844 bytes)
+  BMP: container len=836 @0x0
+    INF: leaf len=18 @0x8
+    BIN: leaf len=802 @0x22
+
+FONTS.BLK  (1860 bytes)
+  FNT: leaf len=484 @0x0
+  FNT: leaf len=580 @0x1ec
+  FNT: leaf len=772 @0x438
+
+GAS.BMP  (4167 bytes)
+  BMP: container len=4159 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=4137 @0x16
+
+HI_SCORE  (190 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x61 (at byte offset 3)
+
+HOUSTON.BMP  (3651 bytes)
+  BMP: container len=3643 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3621 @0x16
+
+HOUSTON.MAP  (5890 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+HOUSTON.TRK  (5332 bytes)
+  [not a chunk tree] chunk "TRK" declares 65552 bytes but only 5324 remain in parent (at byte offset 4)
+
+INSTALL.COM  (184 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x2a (at byte offset 3)
+
+LA.BMP  (3181 bytes)
+  BMP: container len=3173 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3151 @0x16
+
+LA.MAP  (3282 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+LA.TRK  (10678 bytes)
+  [not a chunk tree] chunk "TRK" declares 65555 bytes but only 10670 remain in parent (at byte offset 4)
+
+LURKER.BMP  (3184 bytes)
+  BMP: container len=3176 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3154 @0x16
+
+LURKER.TBL  (1621 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MAFIOZO1.BMP  (2752 bytes)
+  BMP: container len=2744 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2722 @0x16
+
+MAFIOZO2.BMP  (4823 bytes)
+  BMP: container len=4815 @0x0
+    INF: leaf len=10 @0x8
+    BIN: leaf len=4789 @0x1a
+
+MANIAC.BMP  (2782 bytes)
+  BMP: container len=2774 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2752 @0x16
+
+MANIAC.TBL  (1909 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MEGA.BMP  (2665 bytes)
+  BMP: container len=2657 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2635 @0x16
+
+MEGA.TBL  (1668 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MELISSA.BMP  (4254 bytes)
+  BMP: container len=4246 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=4224 @0x16
+
+MELISSA.TBL  (1709 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MENACE.BMP  (4471 bytes)
+  BMP: container len=4463 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=4441 @0x16
+
+MENACE.TBL  (1690 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MYCAR0.TBL  (1756 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MYCAR1.TBL  (1974 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+MYCAR2.TBL  (2012 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+NYC.BMP  (1945 bytes)
+  BMP: container len=1937 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=1915 @0x16
+
+NYC.MAP  (10395 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+NYC.TRK  (8474 bytes)
+  [not a chunk tree] chunk "TRK" declares 65553 bytes but only 8466 remain in parent (at byte offset 4)
+
+ORLANDO.BMP  (2694 bytes)
+  BMP: container len=2686 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2664 @0x16
+
+ORLANDO.MAP  (3567 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+ORLANDO.TRK  (11422 bytes)
+  [not a chunk tree] chunk "TRK" declares 65552 bytes but only 11414 remain in parent (at byte offset 4)
+
+PALS.BLK  (1493 bytes)
+  SND: container len=528 @0x0
+    INF: leaf len=6 @0x8
+    IBM: leaf len=506 @0x16
+  PAL: container len=306 @0x218
+    EGA: leaf len=128 @0x220
+    CGA: leaf len=162 @0x2a8
+  PAL: container len=306 @0x352
+    EGA: leaf len=128 @0x35a
+    CGA: leaf len=162 @0x3e2
+  BMP: container len=321 @0x48c
+    INF: leaf len=14 @0x494
+    BIN: leaf len=291 @0x4aa
+
+PARTS.BMP  (3640 bytes)
+  BMP: container len=3632 @0x0
+    INF: leaf len=82 @0x8
+    BIN: leaf len=3534 @0x62
+
+PHOENIX.BMP  (2590 bytes)
+  BMP: container len=2582 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2560 @0x16
+
+PHOENIX.MAP  (5413 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+PHOENIX.TRK  (8990 bytes)
+  [not a chunk tree] chunk "TRK" declares 65550 bytes but only 8982 remain in parent (at byte offset 4)
+
+PITSTOP.BMP  (3657 bytes)
+  BMP: container len=3649 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3627 @0x16
+
+POSTWAR.SCR  (11260 bytes)
+  SCR: container len=11252 @0x0
+    BIN: leaf len=11244 @0x8
+
+REALNICE.RCT  (428 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x45 (at byte offset 19)
+
+RESULTS.BMP  (1226 bytes)
+  BMP: container len=1218 @0x0
+    INF: leaf len=14 @0x8
+    BIN: leaf len=1188 @0x1e
+
+SEATTLE.BMP  (3447 bytes)
+  BMP: container len=3439 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3417 @0x16
+
+SEATTLE.MAP  (5053 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+SEATTLE.TRK  (10566 bytes)
+  [not a chunk tree] chunk "TRK" declares 131087 bytes but only 10558 remain in parent (at byte offset 4)
+
+SHAPE.TBL  (78544 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+SLY.BMP  (2021 bytes)
+  BMP: container len=2013 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=1991 @0x16
+
+SLY.TBL  (1656 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+ST_LOUIS.BMP  (3160 bytes)
+  BMP: container len=3152 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=3130 @0x16
+
+ST_LOUIS.MAP  (5259 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)
+
+ST_LOUIS.TRK  (6870 bytes)
+  [not a chunk tree] chunk "TRK" declares 1441810 bytes but only 6862 remain in parent (at byte offset 4)
+
+TITLE.BMP  (1328 bytes)
+  BMP: container len=1320 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=1298 @0x16
+
+TITLE.TTM  (391 bytes)
+  TTM: leaf len=383 @0x0
+
+TRAX.MUS  (26957 bytes)
+  SND: leaf len=26949 @0x0
+
+TTEESSTT.RCT  (428 bytes)
+  [not a chunk tree] chunk "RAC" declares 19660821 bytes but only 420 remain in parent (at byte offset 4)
+
+WANTSYOU.BMP  (956 bytes)
+  BMP: container len=948 @0x0
+    INF: leaf len=10 @0x8
+    BIN: leaf len=922 @0x1a
+
+WEAPONS.BMP  (8806 bytes)
+  BMP: container len=8798 @0x0
+    INF: leaf len=114 @0x8
+    BIN: leaf len=8668 @0x82
+
+WIN.BMP  (6927 bytes)
+  BMP: container len=6919 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=6897 @0x16
+
+WRECKER.BMP  (2836 bytes)
+  BMP: container len=2828 @0x0
+    INF: leaf len=6 @0x8
+    BIN: leaf len=2806 @0x16
+
+WRECKER.TBL  (1412 bytes)
+  [not a chunk tree] expected ':' at byte 3 of chunk tag but found 0x00 (at byte offset 3)

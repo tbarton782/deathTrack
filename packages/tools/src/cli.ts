@@ -382,10 +382,34 @@ export async function run(
  */
 export async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
   const useReal = argv.includes('--real');
+  const useProbe = argv.includes('--probe');
   const positional = argv.filter((a) => !a.startsWith('--'));
+
+  if (useProbe) {
+    // Chunk-tree probe (section 25.3): walk <inputDir> and record every file's
+    // Dynamix RES chunk structure. Optional second arg is an output report
+    // file; otherwise the report is printed to stdout.
+    const [inputDir, reportFile] = positional;
+    if (!inputDir) {
+      console.error('Usage: deathtrack-tools --probe <inputDir> [reportFile]');
+      return 2;
+    }
+    const { probeChunkDir, formatChunkReport } = await import('./chunkProbe.js');
+    const reports = await probeChunkDir(inputDir);
+    const text = formatChunkReport(reports);
+    if (reportFile) {
+      const { promises: fsp } = await import('node:fs');
+      await fsp.writeFile(reportFile, text, 'utf8');
+      console.log(`[probe] wrote ${reports.length} file report(s) to ${reportFile}`);
+    } else {
+      console.log(text);
+    }
+    return 0;
+  }
+
   const [inputDir, outputDir] = positional;
   if (!inputDir || !outputDir) {
-    console.error('Usage: deathtrack-tools [--real] <inputDir> <outputDir>');
+    console.error('Usage: deathtrack-tools [--real|--probe] <inputDir> <outputDir>');
     return 2;
   }
   if (useReal) {
