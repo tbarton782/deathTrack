@@ -11,27 +11,27 @@
  *
  * - the `"TRK:"` tag;
  * - the body is an even-length little-endian **int16 stream**;
- * - it begins with a run of 4-byte **`(dx, distance)` pairs** — a small signed
- *   lateral offset (observed range roughly `-16..25`) paired with a
- *   monotonically non-decreasing cumulative `distance`. This is the road
- *   **centerline / curvature profile**.
- * - immediately after the centerline, most tracks carry a **road-profile
- *   array**: 6-byte `[c0, c1, distance]` records sampled at a fixed **±30**
- *   distance step (the sign is per-track — some tracks run the distance axis
- *   negative). `c0` sits near zero and `c1` ramps smoothly up and down along the
- *   track; the array is confidently *located* (start / step / length) even
- *   though the exact meaning of `c0`/`c1` (curvature / banking / elevation /
- *   width) is not yet confirmed, so those columns are exposed neutrally.
+ * - it begins with a short run of 4-byte **`(dx, distance)` pairs** — a small
+ *   signed lateral offset paired with a rising `distance`. This is a lead-in
+ *   **centerline / curvature profile** preamble.
+ * - the bulk of the body is the **road path**: an array of 6-byte
+ *   `[x, profile, z]` records tracing the track's centerline as a 2-D polyline.
+ *   Between consecutive records exactly one of `x`/`z` advances by a small
+ *   amount (~±30) while the other holds; a corner is where the advancing axis
+ *   switches. The `profile` middle column varies smoothly along the track
+ *   (a curvature / banking / elevation term — named neutrally as its exact
+ *   meaning is unconfirmed). Rendering the `(x, z)` polyline produces a
+ *   recognisable **closed race circuit** (verified: ORLANDO, PHOENIX and
+ *   ST_LOUIS trace complete loops covering all but a 4-byte terminator; the
+ *   other tracks trace a valid partial loop before an additional section).
  *
- * What is **not** decoded (deliberately left raw): after the road-profile array
- * the majority of the file remains undocumented — per
- * `research/dynamix-formats.md` §7.1 the `.TRK` payload also carries the AI
- * **waypoint graph**, **jump ramps**, **pit lane**, **hazard zones** and
- * **scenery placements**. Their exact byte layouts could not be confirmed
- * against the files without inventing structure (which the format notes
- * explicitly forbid), so the remaining bytes are exposed as an opaque `tail`
- * and as the raw int16 stream for later reverse engineering, rather than
- * guessed at. The decoder still guarantees every track parses without error.
+ * What is **not** decoded (deliberately left raw): some tracks carry further
+ * data after the first traced loop (a second lap/section, pit lane, jump ramps,
+ * hazard zones, scenery, or the AI waypoint graph — `research/dynamix-formats.md`
+ * §7.1). Those layouts could not be confirmed without inventing structure
+ * (which the format notes forbid), so anything past the traced road path is
+ * exposed as an opaque `tail` and via the raw int16 stream. The decoder always
+ * parses every track without error.
  *
  * Requirements: 9.1, 9.2, 9.5
  */
@@ -58,49 +58,50 @@ export interface CenterlinePoint {
 }
 
 /**
- * A single road-profile record: a run of these follows the centerline, sampled
- * at a fixed ~30-unit distance step. The two leading columns (`c0`, `c1`) carry
- * per-segment road data — one is near-zero and the other ramps smoothly up and
- * down along the track — but their exact meaning (curvature / banking /
- * elevation / width) is not yet confirmed against the engine, so they are named
- * neutrally rather than guessed.
+ * A single road-path point: a 6-byte `[x, profile, z]` record. `x` and `z` are
+ * the centerline position on the ground plane; between consecutive points
+ * exactly one of them advances by a small step while the other holds. `profile`
+ * is a smoothly-varying per-point term (curvature / banking / elevation) whose
+ * exact meaning is unconfirmed, so it is named neutrally.
  */
-export interface RoadProfilePoint {
-  /** First per-segment column (usually near zero). */
-  c0: number;
-  /** Second per-segment column (a smoothly varying profile value). */
-  c1: number;
-  /** Signed cumulative distance for this segment (steps by +30 or -30). */
-  distance: number;
+export interface RoadPathPoint {
+  /** Centerline X coordinate. */
+  x: number;
+  /** Smoothly-varying profile term (curvature / banking / elevation). */
+  profile: number;
+  /** Centerline Z coordinate. */
+  z: number;
 }
 
 /** A decoded track. */
 export interface TrackData {
   /**
-   * The road centerline profile: `(dx, distance)` pairs read from the start of
-   * the body. Confidently decoded; see the module docs.
+   * The lead-in centerline preamble: `(dx, distance)` pairs read from the start
+   * of the body. Confidently decoded; see the module docs.
    */
   centerline: CenterlinePoint[];
   /** Byte offset (from the start of the file) where the centerline run ends. */
   centerlineEnd: number;
   /**
-   * The road-profile array: 6-byte `[c0, c1, distance]` records at a ~±30 unit
-   * distance step, found in most tracks immediately after the centerline.
-   * Confidently *located* (start/step/length), though `c0`/`c1` semantics are
-   * not yet confirmed. Empty when the array could not be identified for a track
-   * (e.g. a variant cadence).
+   * The road path: `[x, profile, z]` points tracing the track centerline as a
+   * 2-D polyline. Confidently decoded and verified to trace a race circuit;
+   * see the module docs.
    */
-  roadProfile: RoadProfilePoint[];
+  roadPath: RoadPathPoint[];
+  /** Byte offset where the road path begins. */
+  roadPathStart: number;
+  /** Byte offset just past the road path (start of the raw tail). */
+  roadPathEnd: number;
   /**
-   * `+30` or `-30`: the direction the road-profile `distance` steps, or `0`
-   * when no road-profile array was identified.
+   * Whether the road path returns close to its start (a closed loop). `true`
+   * for a full circuit; `false` when the traced path stops before closing
+   * (an additional undecoded section follows in the tail).
    */
-  roadProfileStep: number;
-  /** Byte offset where the road-profile array ends (equals its start when empty). */
-  roadProfileEnd: number;
+  roadPathClosed: boolean;
   /**
-   * The remaining, not-yet-reverse-engineered bytes after the decoded sections
-   * (waypoint graph, ramps, pit lane, hazards, scenery). Exposed raw.
+   * The remaining, not-yet-reverse-engineered bytes after the road path
+   * (possible second section, pit lane, ramps, hazards, scenery, AI waypoint
+   * graph). Exposed raw.
    */
   tail: Uint8Array;
   /** The entire body (everything after the 4-byte tag) as little-endian int16s. */
@@ -112,8 +113,20 @@ export interface TrackData {
 /** Maximum plausible absolute lateral offset for a centerline pair. */
 const MAX_CENTERLINE_DX = 200;
 
-/** The fixed distance step of the road-profile array. */
-const ROAD_PROFILE_STEP = 30;
+/**
+ * Maximum per-record step of the advancing axis in the road path. Straight runs
+ * step ~30; corners approximate diagonals with slightly smaller steps. A step
+ * larger than this on *both* axes marks the end of the traced path.
+ */
+const MAX_PATH_STEP = 40;
+
+/**
+ * Distance (in world units) within which the path end is treated as "closed"
+ * back to its start. Real circuits close to within a few segments (~18–76 units
+ * observed); a value well above that but far below any open path keeps the test
+ * unambiguous.
+ */
+const LOOP_CLOSE_DISTANCE = 100;
 
 /**
  * Read a signed little-endian int16 at `offset`.
@@ -174,21 +187,19 @@ export function decodeTrk(fileBytes: Uint8Array): TrackData {
 
   const centerlineEnd = offset;
 
-  // Locate the road-profile array: a run of 6-byte [c0, c1, distance] records
-  // whose distance steps by +30 or -30. Search from the centerline end for the
-  // first place three consecutive records step consistently, then walk it while
-  // the step holds. This is a best-effort *location* of a real, recurring
-  // section — not a claim about c0/c1 semantics.
-  const { profile, step, end } = extractRoadProfile(fileBytes, centerlineEnd);
+  // Decode the road path: a polyline of [x, profile, z] points that starts at
+  // the centerline end and advances one ground axis at a time.
+  const { path, start, end, closed } = extractRoadPath(fileBytes, centerlineEnd);
 
   const tail = fileBytes.subarray(end);
 
   return {
     centerline,
     centerlineEnd,
-    roadProfile: profile,
-    roadProfileStep: step,
-    roadProfileEnd: end,
+    roadPath: path,
+    roadPathStart: start,
+    roadPathEnd: end,
+    roadPathClosed: closed,
     tail: tail.slice(),
     int16Stream,
     byteLength: fileBytes.length,
@@ -196,52 +207,76 @@ export function decodeTrk(fileBytes: Uint8Array): TrackData {
 }
 
 /**
- * Locate and read the road-profile array. Scans forward from `from` for the
- * first offset where three consecutive 6-byte records have a `distance` column
- * stepping by a consistent ±30, then walks records while that step holds.
+ * Decode the road-path polyline of `[x, profile, z]` records starting at the
+ * centerline end. Walks records while the ground position `(x, z)` advances
+ * smoothly: at each step exactly one of `x`/`z` moves by up to
+ * {@link MAX_PATH_STEP} while the other stays close, so a straight run advances
+ * one axis and a corner switches axes. The walk stops when *both* axes jump
+ * (past the path) or the record would run off the buffer.
  *
- * @returns The profile points, the detected step (`±30`, or `0` if none), and
- *   the byte offset just past the array (equal to `from` when none is found).
+ * @returns The path points, its start/end byte offsets, and whether the path
+ *   closes back near its origin (a full circuit).
  */
-function extractRoadProfile(
+function extractRoadPath(
   bytes: Uint8Array,
   from: number,
-): { profile: RoadProfilePoint[]; step: number; end: number } {
-  const distAt = (o: number): number => readI16(bytes, o + 4);
+): { path: RoadPathPoint[]; start: number; end: number; closed: boolean } {
+  const readPoint = (o: number): RoadPathPoint => ({
+    x: readI16(bytes, o),
+    profile: readI16(bytes, o + 2),
+    z: readI16(bytes, o + 4),
+  });
 
-  // Find the start + step direction: 3 records stepping +30 or -30.
-  let start = -1;
-  let step = 0;
-  for (let o = from; o + 18 <= bytes.length; o += 2) {
-    const d0 = distAt(o);
-    const d1 = distAt(o + 6);
-    const d2 = distAt(o + 12);
-    if (d1 - d0 === ROAD_PROFILE_STEP && d2 - d1 === ROAD_PROFILE_STEP) {
-      start = o;
-      step = ROAD_PROFILE_STEP;
-      break;
+  // Walk a smooth [x, profile, z] polyline from byte offset `o0`: successive
+  // points advance one ground axis at a time by a small step. Returns the
+  // points and the byte offset just past them.
+  const walkFrom = (o0: number): { pts: RoadPathPoint[]; end: number } => {
+    const pts: RoadPathPoint[] = [];
+    if (o0 + 6 > bytes.length) return { pts, end: o0 };
+    let prev = readPoint(o0);
+    pts.push(prev);
+    let o = o0 + 6;
+    while (o + 6 <= bytes.length) {
+      const p = readPoint(o);
+      const dx = Math.abs(p.x - prev.x);
+      const dz = Math.abs(p.z - prev.z);
+      // A smooth step advances (at most) one ground axis by a small amount, so
+      // the *smaller* of the two deltas stays tiny. A big jump on both axes at
+      // once marks the end of the polyline.
+      if (Math.min(dx, dz) > MAX_PATH_STEP) break;
+      if (dx > 4000 || dz > 4000) break;
+      pts.push(p);
+      prev = p;
+      o += 6;
     }
-    if (d1 - d0 === -ROAD_PROFILE_STEP && d2 - d1 === -ROAD_PROFILE_STEP) {
-      start = o;
-      step = -ROAD_PROFILE_STEP;
-      break;
-    }
+    return { pts, end: o };
+  };
+
+  // A short transition (a handful of int16s) can sit between the centerline
+  // preamble and the true start of the road-path records, and the record phase
+  // (even vs odd int16 alignment) can shift. Search a small window of candidate
+  // start offsets and keep the one that yields the longest polyline.
+  let best: { pts: RoadPathPoint[]; end: number; start: number } = {
+    pts: [],
+    end: from,
+    start: from,
+  };
+  const limit = Math.min(from + 64, bytes.length);
+  for (let o = from; o + 6 <= limit; o += 2) {
+    const { pts, end } = walkFrom(o);
+    if (pts.length > best.pts.length) best = { pts, end, start: o };
   }
 
-  if (start < 0) {
-    return { profile: [], step: 0, end: from };
+  const path = best.pts;
+  const first = path[0];
+  const last = path[path.length - 1];
+  let closed = false;
+  if (first !== undefined && last !== undefined && path.length > 8) {
+    const gap = Math.abs(first.x - last.x) + Math.abs(first.z - last.z);
+    closed = gap <= LOOP_CLOSE_DISTANCE;
   }
 
-  const profile: RoadProfilePoint[] = [];
-  let o = start;
-  let expect = distAt(start);
-  while (o + 6 <= bytes.length && distAt(o) === expect) {
-    profile.push({ c0: readI16(bytes, o), c1: readI16(bytes, o + 2), distance: expect });
-    o += 6;
-    expect += step;
-  }
-
-  return { profile, step, end: o };
+  return { path, start: best.start, end: best.end, closed };
 }
 
 /** Real filename (upper-case, no extension) → internal `trackId`. */

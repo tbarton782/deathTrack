@@ -101,7 +101,7 @@ export type { TrackBackdrop, BackdropStrip } from './MapDecoder.js';
 export type {
   TrackData as TrkTrackData,
   CenterlinePoint,
-  RoadProfilePoint,
+  RoadPathPoint,
 } from './TrkDecoder.js';
 
 export { encodePng } from './png.js';
