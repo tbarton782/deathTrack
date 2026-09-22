@@ -13,17 +13,17 @@
 
 import type { AICharacter, AIDriverConfig } from '../types/ai.js';
 
-/** The nine named drivers, in a fixed display/grid order. */
+/** The nine named drivers, in a fixed display/grid order (the real roster). */
 export const AI_CHARACTER_ORDER: readonly AICharacter[] = [
   'sly',
   'angel',
   'crimson',
-  'blaze',
-  'havoc',
-  'razor',
-  'viper',
-  'phantom',
-  'wraith',
+  'maniac',
+  'menace',
+  'mega',
+  'lurker',
+  'melissa',
+  'wrecker',
 ];
 
 /**
@@ -35,15 +35,15 @@ export const AI_CHARACTER_ORDER: readonly AICharacter[] = [
 export const AI_DRIVER_PROFILES: Readonly<Record<AICharacter, AIDriverConfig>> = {
   // Expert killers — high skill, high aggression.
   sly: { character: 'sly', skillTier: 'expert', aggression: 5 },
-  crimson: { character: 'crimson', skillTier: 'expert', aggression: 4 },
-  wraith: { character: 'wraith', skillTier: 'expert', aggression: 3 },
+  maniac: { character: 'maniac', skillTier: 'expert', aggression: 4 },
+  wrecker: { character: 'wrecker', skillTier: 'expert', aggression: 3 },
   // Standard mid-field — solid, mixed aggression.
-  havoc: { character: 'havoc', skillTier: 'standard', aggression: 5 },
-  razor: { character: 'razor', skillTier: 'standard', aggression: 4 },
-  viper: { character: 'viper', skillTier: 'standard', aggression: 3 },
+  menace: { character: 'menace', skillTier: 'standard', aggression: 5 },
+  crimson: { character: 'crimson', skillTier: 'standard', aggression: 4 },
+  mega: { character: 'mega', skillTier: 'standard', aggression: 3 },
   // Novices — learning the ropes, lower aggression.
-  blaze: { character: 'blaze', skillTier: 'novice', aggression: 3 },
-  phantom: { character: 'phantom', skillTier: 'novice', aggression: 2 },
+  lurker: { character: 'lurker', skillTier: 'novice', aggression: 3 },
+  melissa: { character: 'melissa', skillTier: 'novice', aggression: 2 },
   angel: { character: 'angel', skillTier: 'novice', aggression: 1 },
 };
 

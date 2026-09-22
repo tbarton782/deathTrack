@@ -21,6 +21,7 @@
  * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.7, 7.8
  */
 
+import { AI_CHARACTER_ORDER } from '@deathtrack/shared';
 import type {
   AICharacter,
   AIDriverConfig,
@@ -82,18 +83,12 @@ export const SESSION_MAX_PLAYERS_MIN = 2;
 export const SESSION_MAX_PLAYERS_MAX = 8;
 export const SESSION_PASSWORD_MAX = 20;
 
-/** The pool of AI characters used when filling empty slots. Requirements: 7.7 */
-const AI_CHARACTERS: readonly AICharacter[] = [
-  'sly',
-  'angel',
-  'crimson',
-  'blaze',
-  'havoc',
-  'razor',
-  'viper',
-  'phantom',
-  'wraith',
-];
+/**
+ * The pool of AI characters used when filling empty slots — the real nine-driver
+ * roster, shared with single-player so both modes field the same opponents.
+ * Requirements: 7.7
+ */
+const AI_CHARACTERS: readonly AICharacter[] = AI_CHARACTER_ORDER;
 
 const AI_SKILL_TIERS: readonly SkillTier[] = ['novice', 'standard', 'expert'];
 

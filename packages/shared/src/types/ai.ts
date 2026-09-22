@@ -24,18 +24,25 @@ export type SkillTier = 'novice' | 'standard' | 'expert';
 
 /**
  * The nine AI driver characters from the original Deathtrack game.
+ *
+ * These are the **real** opponent roster, taken from the original game's own
+ * per-character asset filenames (`SLY.TBL`/`.BMP`, `ANGEL.*`, `CRIMSON.*`,
+ * `MANIAC.*`, `MENACE.*`, `MEGA.*`, `LURKER.*`, `MELISSA.*`, `WRECKER.*`) — the
+ * nine competitor cars the player races against. (`CHAMP.BMP` is the champion
+ * portrait, not one of the nine field opponents, so it is excluded.)
+ *
  * Requirements: 11.6
  */
 export type AICharacter =
   | 'sly'
   | 'angel'
   | 'crimson'
-  | 'blaze'
-  | 'havoc'
-  | 'razor'
-  | 'viper'
-  | 'phantom'
-  | 'wraith';
+  | 'maniac'
+  | 'menace'
+  | 'mega'
+  | 'lurker'
+  | 'melissa'
+  | 'wrecker';
 
 // ---------------------------------------------------------------------------
 // AI configuration

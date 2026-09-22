@@ -38,7 +38,7 @@ describe('AI_CHARACTERS roster', () => {
 describe('portraitAssetId', () => {
   it('derives a prefixed, deterministic asset id per character', () => {
     expect(portraitAssetId('sly')).toBe(`${PORTRAIT_ASSET_PREFIX}sly`);
-    expect(portraitAssetId('wraith')).toBe(`${PORTRAIT_ASSET_PREFIX}wraith`);
+    expect(portraitAssetId('wrecker')).toBe(`${PORTRAIT_ASSET_PREFIX}wrecker`);
   });
 });
 

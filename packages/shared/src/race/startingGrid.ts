@@ -36,12 +36,12 @@ const AI_DISPLAY_NAMES: Readonly<Record<AICharacter, string>> = {
   sly: 'Sly',
   angel: 'Angel',
   crimson: 'Crimson',
-  blaze: 'Blaze',
-  havoc: 'Havoc',
-  razor: 'Razor',
-  viper: 'Viper',
-  phantom: 'Phantom',
-  wraith: 'Wraith',
+  maniac: 'Maniac',
+  menace: 'Menace',
+  mega: 'Mega',
+  lurker: 'Lurker',
+  melissa: 'Melissa',
+  wrecker: 'Wrecker',
 };
 
 /** The assembled starting grid a {@link RaceLoop} is constructed from. */

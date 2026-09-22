@@ -1,5 +1,6 @@
 import { Container, Graphics, Sprite, Text, Texture } from 'pixi.js';
 import type { TextStyleOptions } from 'pixi.js';
+import { AI_CHARACTER_ORDER } from '@deathtrack/shared';
 import type { AICharacter } from '@deathtrack/shared';
 
 /**
@@ -32,22 +33,11 @@ import type { AICharacter } from '@deathtrack/shared';
 // ---------------------------------------------------------------------------
 
 /**
- * The nine AI driver characters, in canonical display order. This mirrors the
- * shared {@link AICharacter} union and is the single source of truth for the
- * roster the Competitor Info screen presents. Exactly nine entries
- * (Requirement 11.6).
+ * The nine AI driver characters, in canonical display order — the real roster,
+ * re-exported from the shared {@link AI_CHARACTER_ORDER} so this screen and the
+ * gameplay use a single source of truth. Exactly nine entries (Requirement 11.6).
  */
-export const AI_CHARACTERS: readonly AICharacter[] = [
-  'sly',
-  'angel',
-  'crimson',
-  'blaze',
-  'havoc',
-  'razor',
-  'viper',
-  'phantom',
-  'wraith',
-] as const;
+export const AI_CHARACTERS: readonly AICharacter[] = AI_CHARACTER_ORDER;
 
 /** The number of AI driver characters shown on the screen (Requirement 11.6). */
 export const AI_CHARACTER_COUNT = AI_CHARACTERS.length;
@@ -57,28 +47,30 @@ export const CHARACTER_NAMES: Record<AICharacter, string> = {
   sly: 'Sly',
   angel: 'Angel',
   crimson: 'Crimson',
-  blaze: 'Blaze',
-  havoc: 'Havoc',
-  razor: 'Razor',
-  viper: 'Viper',
-  phantom: 'Phantom',
-  wraith: 'Wraith',
+  maniac: 'Maniac',
+  menace: 'Menace',
+  mega: 'Mega',
+  lurker: 'Lurker',
+  melissa: 'Melissa',
+  wrecker: 'Wrecker',
 };
 
 /**
  * Biographical text for each character, keyed by {@link AICharacter}. Short,
  * flavourful bios in the spirit of the original game's competitor dossiers.
+ * (Authored flavour text — the original dossiers are not recoverable from the
+ * shipped assets; the roster names themselves are the game's real drivers.)
  */
 export const CHARACTER_BIOS: Record<AICharacter, string> = {
   sly: 'A calculating veteran who wins by patience, letting rivals wreck themselves before slipping past for the kill.',
   angel: 'Cold and precise, she treats every race as target practice and rarely misses her mark.',
-  crimson: 'A reckless brawler who leaves a trail of burning wrecks and answers every hit with two of his own.',
-  blaze: 'Fastest foot on the circuit; she would rather outrun a missile than dodge it.',
-  havoc: 'A demolition specialist who seeds the track with mines and dares you to follow.',
-  razor: 'Surgical and silent, he picks off stragglers with rear drops before they know he is there.',
-  viper: 'Aggressive to a fault, she tailgates at full throttle and rams anything between her and first place.',
-  phantom: 'An elusive tactician who vanishes into the pack and strikes from angles no one expects.',
-  wraith: 'The circuit legend nobody has beaten twice; equal parts speed, armour, and menace.',
+  crimson: 'A steady mid-pack brawler who answers every hit with two of his own and never yields a corner.',
+  maniac: 'Utterly fearless behind the wheel; he attacks flat-out and treats a near-miss as a personal insult.',
+  menace: 'A relentless aggressor who tailgates at full throttle and rams anything between him and first place.',
+  mega: 'Big engine, bigger ego — he trades finesse for raw power and bulls his way to the front.',
+  lurker: 'An elusive tactician who slips into the pack and strikes from angles no one expects.',
+  melissa: 'A cool-headed newcomer learning the circuit fast, picking her moments rather than forcing them.',
+  wrecker: 'The demolition specialist nobody wants behind them; equal parts speed, armour, and pure menace.',
 };
 
 // ---------------------------------------------------------------------------
