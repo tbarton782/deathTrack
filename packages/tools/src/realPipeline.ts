@@ -17,12 +17,16 @@
  * - `.BMP` / `.BLK` sprite sheets → `SpriteSheetBundle` → `assets/sprites/<name>.dtasset`
  * - `FONTS.BLK` fonts → glyph data → `assets/fonts/<name>.dtasset`
  * - `.MAP` track horizon backdrops → strips → `assets/backdrops/<name>.dtasset`
- * - `.TRK` tracks → road-path polyline + centerline → `assets/tracks/<trackId>.dtasset`
- *   (named by the canonical `trackId`). Note: this is the decoded road geometry,
- *   not the full `TrackDef` the runtime `reconstructTrack` expects — the AI
- *   waypoint graph / pit / ramps / hazards remain in the `.TRK` tail and are not
- *   emitted (see task 25.9). The container is a faithful export of what is
- *   decoded.
+ * - `.TRK` tracks → a runtime-loadable `TrackDef` → `assets/tracks/<trackId>.dtasset`
+ *   (named by the canonical `trackId`). The decoded road-path polyline becomes
+ *   real `roadSegments` (centre + computed normal); the waypoint graph is left
+ *   empty so the runtime rebuilds it from the segments. Data the `.TRK` format
+ *   does not encode — per-segment lane width/surface (documented defaults) and
+ *   the gameplay zones (`pitLane`/`jumpRamps`/`hazardZones`/`scenery`, emitted
+ *   empty rather than fabricated; the decoded tail is only a terminator, see
+ *   task 25.9). The raw `roadPath` (incl. the neutral `profile` column) and
+ *   lead-in `centerline` are carried through for fidelity. The container loads
+ *   through `BinaryAssetLoader.loadTrack` / `reconstructTrack`.
  *
  * Deliberately **not** emitted (blocked / reclassified — see tasks.md §25):
  * `.TBL` (3D vector models, not stat tables), and `.MUS`.
@@ -128,6 +132,120 @@ function baseName(file: string): string {
 }
 
 /**
+ * Display metadata (name / city) for each canonical trackId. These are the
+ * real Death Track venue names — not decoded from the `.TRK` bytes (the format
+ * carries no text), so they are a small fixed lookup rather than fabricated
+ * per-run values.
+ */
+const TRACK_META: Readonly<Record<string, { name: string; city: string }>> = {
+  bay_area: { name: 'Bay Area', city: 'San Francisco' },
+  boston: { name: 'Boston', city: 'Boston' },
+  chicago: { name: 'Chicago', city: 'Chicago' },
+  houston: { name: 'Houston', city: 'Houston' },
+  los_angeles: { name: 'Los Angeles', city: 'Los Angeles' },
+  manhattan: { name: 'Manhattan', city: 'New York' },
+  orlando: { name: 'Orlando', city: 'Orlando' },
+  phoenix: { name: 'Phoenix', city: 'Phoenix' },
+  seattle: { name: 'Seattle', city: 'Seattle' },
+  st_louis: { name: 'St. Louis', city: 'St. Louis' },
+};
+
+/**
+ * Default driveable lane width applied to every road segment. The `.TRK`
+ * format does not encode a per-segment lane width (see `TrkDecoder`), so a
+ * single documented constant is used rather than inventing per-segment values.
+ * The runtime treats `RoadSegment.width` as the full lane width in track-space
+ * units.
+ */
+const DEFAULT_ROAD_WIDTH = 20;
+
+/** A road-path point as emitted by the TRK decoder. */
+interface RoadPathPointJson {
+  x: number;
+  profile: number;
+  z: number;
+}
+
+/**
+ * Transform a decoded `.TRK` road-path polyline into a runtime-loadable
+ * `TrackDef`-shaped JSON payload (the shape `BinaryAssetLoader.reconstructTrack`
+ * and `buildWaypointGraph` consume).
+ *
+ * What is **real decoded geometry**: `roadSegments[i].centre` (`x` from the
+ * ground-plane X column, `y` from the ground-plane Z column) and
+ * `roadSegments[i].normal` (the unit perpendicular of the direction to the next
+ * point). The raw `roadPath` (incl. the neutral `profile` column) and lead-in
+ * `centerline` are carried through unchanged for fidelity.
+ *
+ * What is **a documented default** (not in the `.TRK` format): each segment's
+ * `width` ({@link DEFAULT_ROAD_WIDTH}) and `surface` (`'asphalt'`).
+ *
+ * What is **honestly empty** (no such section exists in the `.TRK` — the decoded
+ * tail is only a terminator): `jumpRamps`, `hazardZones`, `scenery`, and
+ * `pitLane.path`. `waypointGraph` is left empty on purpose so the runtime
+ * `buildWaypointGraph` rebuilds it from `roadSegments` (a closed loop over the
+ * ordered centerline).
+ */
+function roadPathToTrackDef(
+  trackId: string,
+  roadPath: RoadPathPointJson[],
+  centerline: { dx: number; distance: number }[],
+  roadPathClosed: boolean,
+  source: string,
+): Record<string, unknown> {
+  const n = roadPath.length;
+  const roadSegments = roadPath.map((p, i) => {
+    // Direction to the next point (wrapping at the end for a closed loop) gives
+    // the road heading; the segment normal is its unit perpendicular.
+    const next = roadPath[(i + 1) % n] ?? p;
+    const dx = next.x - p.x;
+    const dz = next.z - p.z;
+    const len = Math.hypot(dx, dz) || 1;
+    // Perpendicular of (dx, dz) is (-dz, dx); normalise. Vec2 uses x/y, where
+    // our ground-plane Z maps onto y.
+    const normal = { x: -dz / len, y: dx / len };
+    return {
+      index: i,
+      centre: { x: p.x, y: p.z },
+      width: DEFAULT_ROAD_WIDTH,
+      normal,
+      surface: 'asphalt' as const,
+    };
+  });
+
+  const meta = TRACK_META[trackId] ?? { name: trackId, city: trackId };
+
+  return {
+    id: trackId,
+    name: meta.name,
+    city: meta.city,
+    lapCount: 3,
+    // Real decoded centerline geometry.
+    roadSegments,
+    // Left empty so the runtime rebuilds the graph from roadSegments.
+    waypointGraph: { nodes: [], edges: [] },
+    // Not present in the .TRK format — emitted empty rather than fabricated.
+    pitLane: {
+      entryPosition: { x: 0, y: 0 },
+      exitPosition: { x: 0, y: 0 },
+      path: [],
+    },
+    jumpRamps: [],
+    hazardZones: [],
+    scenery: [],
+    // The WebGL palette is supplied separately (assets/palette); an empty array
+    // reconstructs to an empty Uint8Array at load time.
+    palette: [],
+    // Fidelity extras: the raw decoded road path (incl. the neutral profile
+    // column), the lead-in centerline preamble, and closure flag.
+    roadPath,
+    centerline,
+    roadPathClosed,
+    source,
+  };
+}
+
+/**
  * Convert the recognised real assets under `inputDir` into `AssetLoader`
  * containers written beneath `outputDir/assets/`. Batch mode: a failure on one
  * file is logged and the walk continues (no partial asset is written for it).
@@ -197,17 +315,22 @@ export async function convertReal(
           })),
         });
       } else if (ext === 'trk') {
-        // Track: the road-path polyline (centerline geometry) plus the lead-in
-        // centerline preamble. Named by canonical trackId when known.
+        // Track: transform the decoded road-path polyline into a runtime
+        // `TrackDef`-shaped payload (real `roadSegments` centerline geometry;
+        // empty waypoint graph so the runtime rebuilds it; empty gameplay zones
+        // that the `.TRK` format does not encode). Named by canonical trackId.
         const track = decodeTrk(bytes);
         const trackId = trackIdForFilename(fname) ?? stem.toLowerCase();
-        await writeAsset('tracks', trackId, AssetKind.Track, {
+        const roadPath = track.roadPath.map((p) => ({ x: p.x, profile: p.profile, z: p.z }));
+        const centerline = track.centerline.map((c) => ({ dx: c.dx, distance: c.distance }));
+        const payload = roadPathToTrackDef(
           trackId,
-          source: stem,
-          roadPathClosed: track.roadPathClosed,
-          roadPath: track.roadPath.map((p) => ({ x: p.x, profile: p.profile, z: p.z })),
-          centerline: track.centerline.map((c) => ({ dx: c.dx, distance: c.distance })),
-        });
+          roadPath,
+          centerline,
+          track.roadPathClosed,
+          stem,
+        );
+        await writeAsset('tracks', trackId, AssetKind.Track, payload);
       } else if (isFontContainer(bytes)) {
         // A file of FNT: chunks (e.g. FONTS.BLK) — decode before the BMP branch
         // since fonts also use the `.BLK` extension but hold FNT:, not BMP:.

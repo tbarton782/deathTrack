@@ -14,6 +14,8 @@ import * as path from 'node:path';
 
 import { describe, it, expect, afterEach } from 'vitest';
 
+import { BinaryAssetLoader, InMemoryAssetSource } from '@deathtrack/shared';
+
 import { convertReal } from '../realPipeline.js';
 import { decodeAsset, AssetKind } from '../cli.js';
 
@@ -98,19 +100,52 @@ describe('convertReal against the real dtrack folder', () => {
     expect(block.pixels.length).toBe(160 * 115);
     expect(block.name).toBe('ANGEL_0');
 
-    // Tracks are emitted under their canonical trackId with the decoded road
-    // path (a closed circuit of [x, profile, z] points).
+    // Tracks are emitted under their canonical trackId as a runtime-loadable
+    // TrackDef: real decoded roadSegments (centerline geometry) plus the five
+    // fields reconstructTrack requires.
     expect(result.written).toContain(path.join('assets', 'tracks', 'orlando.dtasset'));
     const trk = await readAsset(outDir, path.join('assets', 'tracks', 'orlando.dtasset'));
     expect(trk.kind).toBe(AssetKind.Track);
     const trkPayload = trk.payload as {
-      trackId: string;
+      id: string;
       roadPathClosed: boolean;
       roadPath: { x: number; profile: number; z: number }[];
+      roadSegments: { index: number; centre: { x: number; y: number }; width: number; normal: { x: number; y: number }; surface: string }[];
+      waypointGraph: { nodes: unknown[]; edges: unknown[] };
     };
-    expect(trkPayload.trackId).toBe('orlando');
+    expect(trkPayload.id).toBe('orlando');
     expect(trkPayload.roadPathClosed).toBe(true);
     expect(trkPayload.roadPath.length).toBeGreaterThan(500);
+    // roadSegments is the real centerline: one segment per road-path point,
+    // each with a decoded centre and a unit normal.
+    expect(trkPayload.roadSegments.length).toBe(trkPayload.roadPath.length);
+    const seg0 = trkPayload.roadSegments[0]!;
+    expect(seg0.centre.x).toBe(trkPayload.roadPath[0]!.x);
+    expect(seg0.centre.y).toBe(trkPayload.roadPath[0]!.z);
+    expect(Math.hypot(seg0.normal.x, seg0.normal.y)).toBeCloseTo(1, 5);
+    // The waypoint graph is intentionally empty (runtime rebuilds it).
+    expect(trkPayload.waypointGraph.nodes.length).toBe(0);
+
+    // The container actually loads through the shared runtime loader: build an
+    // in-memory source over every emitted asset and prove reconstructTrack
+    // accepts the Orlando track (all five required fields present).
+    const assetEntries = await Promise.all(
+      result.written.map(async (rel) => {
+        const bytes = new Uint8Array(await fs.readFile(path.join(outDir, rel)));
+        // The loader keys on `assets/<...>` with forward slashes (basePath
+        // defaults to 'assets/'); `rel` is already `assets/<...>` but uses the
+        // OS path separator.
+        const key = rel.split(path.sep).join('/');
+        return [key, bytes] as const;
+      }),
+    );
+    const source = new InMemoryAssetSource(assetEntries);
+    const loader = new BinaryAssetLoader(source);
+    const trackDef = await loader.loadTrack('orlando');
+    expect(trackDef.id).toBe('orlando');
+    expect(trackDef.roadSegments.length).toBeGreaterThan(500);
+    expect(trackDef.name).toBe('Orlando');
+    expect(Array.isArray(trackDef.jumpRamps)).toBe(true);
 
     // Backdrops (.MAP) are emitted too.
     expect(result.written.some((p) => p.includes(`${path.sep}backdrops${path.sep}`))).toBe(true);
