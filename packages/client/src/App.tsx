@@ -40,7 +40,6 @@ import {
   INITIAL_CAREER_MONEY,
   emptyLoadout,
   type Loadout,
-  type PrizeTable,
   type TrackDef,
   type TrackId,
 } from '@deathtrack/shared';
@@ -67,6 +66,7 @@ import { HUD, buildHudModel } from './ui/HUD.js';
 import { RaceResults } from './ui/RaceResults.js';
 import { InputHandler } from './InputHandler.js';
 import { RaceSession } from './race/RaceSession.js';
+import { CareerSession, CAREER_PRIZE_TABLE, type CareerPurchase } from './career/CareerSession.js';
 import type { RenderState as RenderStateSnapshot } from './renderer/renderState.js';
 
 // ---------------------------------------------------------------------------
@@ -279,22 +279,10 @@ const DEFAULT_RACE_TRACK: TrackId = 'orlando';
 /** Colour of the previewed track centerline (bright green, as in the RE PNGs). */
 const TRACK_PREVIEW_COLOR = 0x33ff66;
 
-/**
- * Prize schedule for a standalone single-player race. Authored design data for
- * the recreation (the original game's exact payout table is not recoverable
- * from the shipped assets): placement prizes for a ten-car field plus a fixed
- * per-elimination bonus, matching the shape the shared {@link computePrizeMoney}
- * formula consumes. Index 0 is unused (placement is 1-based).
- */
-const SINGLE_PLAYER_PRIZE_TABLE: PrizeTable = {
-  placementPrizes: [0, 10000, 6000, 4000, 2500, 1500, 1000, 750, 500, 250, 100],
-  eliminationBonus: 750,
-};
-
-/** Deterministic seed for the standalone single-player race. */
+/** Deterministic seed for the single-player race. */
 const SINGLE_PLAYER_RACE_SEED = 0x5eed;
 
-/** The human player's display name for a standalone single-player race. */
+/** The human player's display name for a single-player career. */
 const SINGLE_PLAYER_NAME = 'Player';
 
 /**
@@ -406,10 +394,27 @@ export async function bootstrap(
   const inputHandler = new InputHandler();
   inputHandler.attach();
 
-  // The human's chosen loadout. Defaults to a fresh hellcat so a race can start
-  // even if the player skips straight through car-config; overwritten with the
-  // player's actual selection when they confirm the car-config screen.
-  let humanLoadout: Loadout = emptyLoadout('hellcat');
+  // The single-player career runtime: owns the CareerController + a localStorage
+  // SaveManager, and mediates the full loop (configure -> race -> results ->
+  // shop -> next race) with real money, owned items, and persistence. Created
+  // best-effort; a failure falls back to a fresh in-memory career.
+  let careerSession: CareerSession | null = null;
+  const careerLoad = decision.blockStart
+    ? Promise.resolve()
+    : CareerSession.create(SINGLE_PLAYER_NAME)
+        .then((s) => {
+          careerSession = s;
+        })
+        .catch((err) => {
+          console.warn(
+            `[client] career session unavailable: ${
+              err instanceof Error ? err.message : String(err)
+            }`,
+          );
+        });
+
+  /** The player's current loadout: the career's if available, else a default. */
+  const currentLoadout = (): Loadout => careerSession?.loadout ?? emptyLoadout('hellcat');
 
   // Best-effort preload of the race track. A missing/unservable asset must not
   // stop the client from booting; the race falls back to a "track unavailable"
@@ -447,8 +452,70 @@ export async function bootstrap(
   let app: App;
 
   // The car-config overlay is captured on first construction so the confirm
-  // handler can read the player's chosen loadout back out of it.
+  // handler can read the player's chosen loadout back out of it, and a rebuild
+  // hook re-seeds it from the live career whenever the screen is shown.
   let carConfigOverlay: CarConfig | null = null;
+  let carConfigRebuild: (() => void) | null = null;
+
+  // The career hub is the Shop: a stable container rebuilt from the live career
+  // (money + catalogue) each time it is shown, whose purchases spend real money
+  // via the CareerSession and persist.
+  const careerOverlay = new Container();
+  careerOverlay.label = 'career';
+
+  /** Navigate to the career hub, syncing the career phase + rebuilding the shop. */
+  const goCareer = (): void => {
+    // Coming from results, move the career flow into its shop phase so the
+    // player can spend their winnings; from the main menu it is a browse-only
+    // visit (purchases enable after the first race).
+    careerSession?.enterHub();
+    rebuildCareerHub();
+    app.dispatch('openCareer');
+  };
+
+  /** Navigate to car-config, advancing to the next race + re-seeding the screen. */
+  const goCarConfig = (): void => {
+    // From the shop hub this is the "next race" step (shop -> config, advancing
+    // the circuit). From the main menu the career is already in config.
+    careerSession?.nextRace();
+    carConfigRebuild?.();
+    app.dispatch('configureCar');
+  };
+
+  /**
+   * Rebuild the career hub from the live career: the Shop (spend winnings +
+   * record owned items) plus a header showing money/circuit progress and a
+   * CONFIGURE CAR button that advances to the next race.
+   */
+  const rebuildCareerHub = (): void => {
+    careerOverlay.removeChildren().forEach((c) => c.destroy({ children: true }));
+    const money = careerSession?.money ?? INITIAL_CAREER_MONEY;
+
+    const shop = new Shop(COMPONENT_CATALOGUE, WEAPON_CATALOGUE, money, (item) => {
+      // Spend real money and record ownership; on success rebuild so the new
+      // balance and affordability are reflected immediately.
+      const purchase: CareerPurchase = { id: item.id, kind: item.kind, price: item.price };
+      const result = careerSession?.buyItem(purchase);
+      if (result?.ok) rebuildCareerHub();
+    });
+    careerOverlay.addChild(shop);
+
+    // Header: player money + circuit/race progress.
+    const info = careerSession
+      ? `$${money.toLocaleString('en-US')}   CIRCUIT ${careerSession.circuitNumber}  RACE ${careerSession.raceNumber}/10`
+      : `$${money.toLocaleString('en-US')}`;
+    const header = new Text({
+      text: info,
+      style: new TextStyle({ fill: 0x88ccff, fontFamily: 'monospace', fontSize: 15, fontWeight: 'bold' }),
+    });
+    header.position.set(24, -28);
+    careerOverlay.addChild(header);
+
+    // CONFIGURE CAR -> next race. Positioned above the shop panel.
+    const button = makeButton('career:configureCar', 'CONFIGURE CAR', 300, 44, () => goCarConfig());
+    button.position.set(260, -34);
+    careerOverlay.addChild(button);
+  };
 
   /** Draw a centred one-line notice into a container (cleared first). */
   const drawNotice = (container: Container, message: string): void => {
@@ -476,19 +543,23 @@ export async function bootstrap(
       return;
     }
 
+    const loadout = currentLoadout();
     const session = new RaceSession({
       track: raceTrack,
-      humanLoadout,
+      humanLoadout: loadout,
       humanName: SINGLE_PLAYER_NAME,
       inputSource: inputHandler,
       seed: SINGLE_PLAYER_RACE_SEED,
     });
     raceSession = session;
 
+    // Advance the career flow into its `race` phase so finishRace is valid.
+    careerSession?.startRace();
+
     const initialCar = session.humanCar;
     if (initialCar) {
       raceHud = new HUD(
-        buildHudModel(initialCar, humanLoadout, session.weaponConfigs, {
+        buildHudModel(initialCar, loadout, session.weaponConfigs, {
           totalLaps: session.lapCount,
         }),
       );
@@ -496,15 +567,33 @@ export async function bootstrap(
     }
   };
 
-  /** Populate the results overlay from the finished race's outcomes. */
+  /**
+   * Populate the results overlay from the finished race's outcomes and award the
+   * player's prize money to the persisted career (which also schedules the
+   * auto-save). The results table shows each car's prize from the same shared
+   * career prize table.
+   */
   const showResults = (): void => {
     resultsOverlay.removeChildren().forEach((c) => c.destroy({ children: true }));
     if (!raceSession) {
       drawNotice(resultsOverlay, 'NO RACE RESULTS');
       return;
     }
-    const results = new RaceResults(raceSession.outcomes(), SINGLE_PLAYER_PRIZE_TABLE);
+    // Award the human's result to the career before drawing the table.
+    const human = raceSession.humanOutcome();
+    if (human && careerSession) {
+      careerSession.finishRace({
+        placement: human.placement,
+        eliminationCount: human.eliminationCount,
+      });
+    }
+    const results = new RaceResults(raceSession.outcomes(), CAREER_PRIZE_TABLE);
     resultsOverlay.addChild(results);
+
+    // CONTINUE -> career hub (results -> shop): lets the player spend winnings.
+    const cont = makeButton('results:continue', 'CONTINUE', 200, 40, () => goCareer());
+    cont.position.set(24, -30);
+    resultsOverlay.addChild(cont);
   };
 
   // Loop controller backed by the renderer's render loop. Entering the `race`
@@ -559,17 +648,18 @@ export async function bootstrap(
   // RaceSession, and `raceResults` shows the finishing table + prize money. The
   // `race`/`raceResults` containers are stable and repopulated per race (see the
   // loop controller + startRaceSession/showResults above).
-  //   - career:    live CareerState (money, owned items, high-score table) —
-  //                 still a Shop preview until the career runtime is wired.
+  //   - career:    the live career hub — the Shop (spending real money via the
+  //                CareerSession, persisted) plus a CONFIGURE CAR button that
+  //                advances to the next race.
   const overlays: OverlayFactories = {
     mainMenu: () => {
       const menu = new MainMenu({
-        // Map each menu action to the navigation event it represents. The
-        // handlers dispatch against the App created below (captured lazily).
-        onStartCareer: () => app.dispatch('openCareer'),
+        // Map each menu action to the navigation it represents. Career entry
+        // goes through goCareer so the career phase + shop are synced/rebuilt.
+        onStartCareer: () => goCareer(),
         onHostSession: () => app.dispatch('configureCar'),
         onJoinSession: () => app.dispatch('configureCar'),
-        onViewHighScores: () => app.dispatch('openCareer'),
+        onViewHighScores: () => goCareer(),
         onSettings: () => {
           // No dedicated settings screen state exists in the navigation model;
           // wired when a settings flow is added.
@@ -578,44 +668,49 @@ export async function bootstrap(
       return menu.view;
     },
     carConfig: () => {
-      const overlay = new CarConfig(
-        {
-          // A fresh player starts on the default chassis with nothing equipped
-          // or owned (Req 5.10); the shop unlocks components/weapons over a
-          // career. The catalogues are the recreation's authored design data.
-          loadout: emptyLoadout('hellcat'),
+      // Seed the car-config screen from the live career: the player's current
+      // loadout plus the components/weapons they own (purchased in the shop).
+      // On a fresh career this is the default chassis with nothing owned
+      // (Req 5.10). A stable container is reused and its contents rebuilt each
+      // time the screen is shown so it reflects newly-purchased items.
+      const rebuild = (): void => {
+        carConfigOverlay?.setInput({
+          loadout: currentLoadout(),
           chassisCatalogue: CHASSIS_CATALOGUE,
           componentCatalogue: COMPONENT_CATALOGUE,
           weaponCatalogue: WEAPON_CATALOGUE,
-          ownedComponents: [],
-          ownedWeapons: [],
+          ownedComponents: [...(careerSession?.ownedComponents ?? [])],
+          ownedWeapons: [...(careerSession?.ownedWeapons ?? [])],
+        });
+      };
+      const overlay = new CarConfig(
+        {
+          loadout: currentLoadout(),
+          chassisCatalogue: CHASSIS_CATALOGUE,
+          componentCatalogue: COMPONENT_CATALOGUE,
+          weaponCatalogue: WEAPON_CATALOGUE,
+          ownedComponents: [...(careerSession?.ownedComponents ?? [])],
+          ownedWeapons: [...(careerSession?.ownedWeapons ?? [])],
         },
         {
           onConfirm: () => {
-            // Capture the player's confirmed loadout so the race grid is built
-            // from the car they actually configured, then advance the flow.
-            humanLoadout = carConfigOverlay?.getInput().loadout ?? humanLoadout;
+            // Persist the player's confirmed loadout into the career, then
+            // advance the flow toward the race.
+            const loadout = carConfigOverlay?.getInput().loadout;
+            if (loadout) careerSession?.setLoadout(loadout);
             app.dispatch('enterLobby');
           },
           onClose: () => app.dispatch('back'),
         },
       );
       carConfigOverlay = overlay;
+      carConfigRebuild = rebuild;
       return overlay;
     },
     lobby: () => buildPreRaceScreen(() => app.dispatch('startRace')),
     race: () => raceOverlay,
     raceResults: () => resultsOverlay,
-    career: () =>
-      // The career hub shows the Shop, driven by the authored catalogue and a
-      // fresh career's starting balance. Affordability/shortfall are computed by
-      // the overlay from `money`; the full purchase -> persist -> next-race loop
-      // is owned by the CareerController and wired when a career actually runs,
-      // so at this entry point a purchase is a no-op log rather than a fake
-      // balance mutation.
-      new Shop(COMPONENT_CATALOGUE, WEAPON_CATALOGUE, INITIAL_CAREER_MONEY, (item) => {
-        console.info(`[client] shop purchase intent: ${item.id} (career runtime not yet wired)`);
-      }),
+    career: () => careerOverlay,
   };
 
   app = new App({
@@ -627,8 +722,36 @@ export async function bootstrap(
       new BrowserWarning(d.support.detected.name === 'Unknown' ? '' : currentUserAgent()),
   });
   app.start();
-  await trackLoad;
+  await Promise.all([trackLoad, careerLoad]);
   return app;
+}
+
+// ---------------------------------------------------------------------------
+// Small PixiJS UI helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a clickable rectangular button {@link Container} with a caption. Used
+ * for the ad-hoc navigation buttons the bootstrap adds to overlays (start race,
+ * continue to career, configure car).
+ */
+function makeButton(label: string, caption: string, width: number, height: number, onActivate: () => void): Container {
+  const button = new Container();
+  button.label = label;
+  const bg = new Graphics();
+  bg.roundRect(0, 0, width, height, 6).fill(0x224488).stroke({ width: 2, color: 0x66aaff });
+  button.addChild(bg);
+  const text = new Text({
+    text: caption,
+    style: new TextStyle({ fill: 0xffffff, fontFamily: 'monospace', fontSize: 16 }),
+  });
+  text.anchor.set(0.5);
+  text.position.set(width / 2, height / 2);
+  button.addChild(text);
+  button.eventMode = 'static';
+  button.cursor = 'pointer';
+  button.on('pointertap', onActivate);
+  return button;
 }
 
 // ---------------------------------------------------------------------------
@@ -660,22 +783,8 @@ function buildPreRaceScreen(onStart: () => void): Container {
   title.position.set(24, 20);
   root.addChild(title);
 
-  const button = new Container();
-  button.label = 'lobby:startRace';
+  const button = makeButton('lobby:startRace', 'START RACE', 312, 44, onStart);
   button.position.set(24, 90);
-  const bg = new Graphics();
-  bg.roundRect(0, 0, 312, 44, 6).fill(0x224488).stroke({ width: 2, color: 0x66aaff });
-  button.addChild(bg);
-  const caption = new Text({
-    text: 'START RACE',
-    style: new TextStyle({ fill: 0xffffff, fontFamily: 'monospace', fontSize: 16 }),
-  });
-  caption.anchor.set(0.5);
-  caption.position.set(156, 22);
-  button.addChild(caption);
-  button.eventMode = 'static';
-  button.cursor = 'pointer';
-  button.on('pointertap', onStart);
   root.addChild(button);
 
   return root;

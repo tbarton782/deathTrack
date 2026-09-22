@@ -41,10 +41,18 @@ import {
   CorruptSaveError,
   type CareerState,
   type CareerResult,
+  type ComponentId,
+  type Loadout,
   type PrizeTable,
   type SaveSlot,
   type SlotInfo,
+  type WeaponId,
 } from '@deathtrack/shared';
+
+/** Append `value` to `list` if absent, returning a fresh array. */
+function appendUnique<T>(list: readonly T[], value: T): T[] {
+  return list.includes(value) ? [...list] : [...list, value];
+}
 
 // ---------------------------------------------------------------------------
 // Auto-save timing budget (Requirement 12.1)
@@ -585,10 +593,18 @@ export class CareerController {
    * is rejected with the exact shortfall and leaves the career unchanged
    * (Requirements 5.3, 5.4). Returns the shared {@link CareerResult}.
    *
+   * When `owned` is supplied, a successful purchase also records the item in the
+   * career's owned-component or owned-weapon list (deduplicated) so it becomes
+   * available in car-config for subsequent races (Requirement 5.5). The money
+   * deduction and the ownership record are applied together.
+   *
    * Rejected (returns an `insufficient_funds` result) when not in the `shop`
    * phase, so purchases cannot happen outside the shop.
    */
-  buyItem(itemPrice: number): CareerResult<CareerState> {
+  buyItem(
+    itemPrice: number,
+    owned?: { readonly kind: 'component' | 'weapon'; readonly id: string },
+  ): CareerResult<CareerState> {
     if (this.currentPhase !== 'shop') {
       return {
         ok: false,
@@ -600,9 +616,36 @@ export class CareerController {
 
     const result = purchaseItem(this.currentCareer, itemPrice);
     if (result.ok) {
-      this.currentCareer = result.value;
+      let next = result.value;
+      if (owned !== undefined) {
+        next =
+          owned.kind === 'component'
+            ? {
+                ...next,
+                ownedComponents: appendUnique(next.ownedComponents, owned.id as ComponentId),
+              }
+            : {
+                ...next,
+                ownedWeapons: appendUnique(next.ownedWeapons, owned.id as WeaponId),
+              };
+      }
+      this.currentCareer = next;
     }
     return result;
+  }
+
+  /**
+   * Set the player's configured car loadout for the upcoming race. Valid only
+   * from the `config` phase (where car configuration happens); a no-op returning
+   * `false` from any other phase. Mutates only the in-memory career; it is
+   * persisted with the next auto-save/finish.
+   */
+  configureLoadout(loadout: Loadout): boolean {
+    if (this.currentPhase !== 'config') {
+      return false;
+    }
+    this.currentCareer = { ...this.currentCareer, currentLoadout: loadout };
+    return true;
   }
 
   /**
