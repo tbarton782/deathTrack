@@ -98,8 +98,25 @@ describe('convertReal against the real dtrack folder', () => {
     expect(block.pixels.length).toBe(160 * 115);
     expect(block.name).toBe('ANGEL_0');
 
-    // Tracks/tables/maps/music are deliberately not emitted (deferred/blocked).
-    expect(result.written.some((p) => p.includes(`${path.sep}tracks${path.sep}`))).toBe(false);
+    // Tracks are emitted under their canonical trackId with the decoded road
+    // path (a closed circuit of [x, profile, z] points).
+    expect(result.written).toContain(path.join('assets', 'tracks', 'orlando.dtasset'));
+    const trk = await readAsset(outDir, path.join('assets', 'tracks', 'orlando.dtasset'));
+    expect(trk.kind).toBe(AssetKind.Track);
+    const trkPayload = trk.payload as {
+      trackId: string;
+      roadPathClosed: boolean;
+      roadPath: { x: number; profile: number; z: number }[];
+    };
+    expect(trkPayload.trackId).toBe('orlando');
+    expect(trkPayload.roadPathClosed).toBe(true);
+    expect(trkPayload.roadPath.length).toBeGreaterThan(500);
+
+    // Backdrops (.MAP) are emitted too.
+    expect(result.written.some((p) => p.includes(`${path.sep}backdrops${path.sep}`))).toBe(true);
+
+    // Tables/music are still deliberately not emitted (deferred/blocked).
+    expect(result.written.some((p) => p.includes(`${path.sep}tables${path.sep}`))).toBe(false);
 
     // Every emitted container round-trips through the shared decoder.
     for (const rel of result.written) {

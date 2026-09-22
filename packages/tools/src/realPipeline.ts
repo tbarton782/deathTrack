@@ -17,10 +17,14 @@
  * - `.BMP` / `.BLK` sprite sheets → `SpriteSheetBundle` → `assets/sprites/<name>.dtasset`
  * - `FONTS.BLK` fonts → glyph data → `assets/fonts/<name>.dtasset`
  * - `.MAP` track horizon backdrops → strips → `assets/backdrops/<name>.dtasset`
+ * - `.TRK` tracks → road-path polyline + centerline → `assets/tracks/<trackId>.dtasset`
+ *   (named by the canonical `trackId`). Note: this is the decoded road geometry,
+ *   not the full `TrackDef` the runtime `reconstructTrack` expects — the AI
+ *   waypoint graph / pit / ramps / hazards remain in the `.TRK` tail and are not
+ *   emitted (see task 25.9). The container is a faithful export of what is
+ *   decoded.
  *
  * Deliberately **not** emitted (blocked / reclassified — see tasks.md §25):
- * `.TRK` tracks (the runtime `reconstructTrack` needs road/waypoint/pit/ramp/
- * hazard geometry the `TrkDecoder` cannot produce without inventing layouts),
  * `.TBL` (3D vector models, not stat tables), and `.MUS`.
  *
  * Requirements: 9.1, 9.5, 9.6
@@ -36,6 +40,7 @@ import { decodeScr } from './parsers/ScrDecoder.js';
 import { decodeBmpFile, type SpriteSheet } from './parsers/BmpDecoder.js';
 import { decodeFonts, type Font } from './parsers/FntDecoder.js';
 import { decodeMap } from './parsers/MapDecoder.js';
+import { decodeTrk, trackIdForFilename } from './parsers/TrkDecoder.js';
 
 /** Serialise a value to UTF-8 JSON bytes, expanding typed arrays to number[]. */
 function toJsonBytes(value: unknown): Uint8Array {
@@ -190,6 +195,18 @@ export async function convertReal(
             height: s.height,
             indices: Array.from(s.indices),
           })),
+        });
+      } else if (ext === 'trk') {
+        // Track: the road-path polyline (centerline geometry) plus the lead-in
+        // centerline preamble. Named by canonical trackId when known.
+        const track = decodeTrk(bytes);
+        const trackId = trackIdForFilename(fname) ?? stem.toLowerCase();
+        await writeAsset('tracks', trackId, AssetKind.Track, {
+          trackId,
+          source: stem,
+          roadPathClosed: track.roadPathClosed,
+          roadPath: track.roadPath.map((p) => ({ x: p.x, profile: p.profile, z: p.z })),
+          centerline: track.centerline.map((c) => ({ dx: c.dx, distance: c.distance })),
         });
       } else if (isFontContainer(bytes)) {
         // A file of FNT: chunks (e.g. FONTS.BLK) — decode before the BMP branch
