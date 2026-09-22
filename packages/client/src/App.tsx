@@ -49,6 +49,7 @@ import {
   currentUserAgent,
   BrowserWarning,
 } from './ui/BrowserWarning.js';
+import { MainMenu } from './ui/MainMenu.js';
 
 // ---------------------------------------------------------------------------
 // Injected collaborators (structural interfaces so fakes suffice in tests)
@@ -365,15 +366,41 @@ export async function bootstrap(
     },
   };
 
-  // Overlay factories. Each returns a PixiJS Container; overlays that expose a
-  // `.view` are adapted, those that extend Container are returned directly.
-  // These are created lazily by the App on first navigation, so unused screens
-  // never allocate. Concrete overlay construction (with real handlers/models)
-  // is beyond this entry-point wiring task and is assembled per-screen as those
-  // flows are entered; here we provide placeholder containers that the
-  // per-screen wiring replaces. The App only requires a Container per screen.
+  // The App is referenced by the main-menu handlers below, which dispatch
+  // navigation events back into it. Factories run lazily (on first navigation),
+  // so by the time `mainMenu` is constructed `app` is assigned.
+  let app: App;
+
+  // Overlay factories. Each returns a PixiJS `Container`; overlays that extend
+  // `Container` are returned directly, and `MainMenu` (which exposes a `.view`
+  // container) is adapted. Factories are created lazily by the App on first
+  // navigation, so unused screens never allocate.
+  //
+  // `mainMenu` is wired to the real overlay because it needs only navigation
+  // callbacks (no live game data). The remaining screens each require live
+  // runtime data that this boot-time entry point cannot truthfully provide yet,
+  // so they stay as documented placeholders until their flow is entered:
+  //   - carConfig: a live Loadout + chassis/component/weapon catalogues + owned lists
+  //   - lobby:     a live multiplayer Session (only exists after host/join)
+  //   - race:      per-frame CarRaceState for the HUD + the running sim/loop
+  //   - raceResults: the finishing ParticipantRaceOutcome[] + a PrizeTable
+  //   - career:    live CareerState (money, owned items, high-score table)
   const overlays: OverlayFactories = {
-    mainMenu: () => new Container(),
+    mainMenu: () => {
+      const menu = new MainMenu({
+        // Map each menu action to the navigation event it represents. The
+        // handlers dispatch against the App created below (captured lazily).
+        onStartCareer: () => app.dispatch('openCareer'),
+        onHostSession: () => app.dispatch('configureCar'),
+        onJoinSession: () => app.dispatch('configureCar'),
+        onViewHighScores: () => app.dispatch('openCareer'),
+        onSettings: () => {
+          // No dedicated settings screen state exists in the navigation model;
+          // wired when a settings flow is added.
+        },
+      });
+      return menu.view;
+    },
     carConfig: () => new Container(),
     lobby: () => new Container(),
     race: () => new Container(),
@@ -381,7 +408,7 @@ export async function bootstrap(
     career: () => new Container(),
   };
 
-  const app = new App({
+  app = new App({
     host,
     overlays,
     loop,
