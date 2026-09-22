@@ -31,7 +31,7 @@
 // Requirements: 13.1 (modern browser), 13.3 (menu → race navigation), 13.6
 // (block the loop on an unsupported browser).
 
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 import {
   BinaryAssetLoader,
   CHASSIS_CATALOGUE,
@@ -39,6 +39,9 @@ import {
   WEAPON_CATALOGUE,
   INITIAL_CAREER_MONEY,
   emptyLoadout,
+  type Loadout,
+  type PrizeTable,
+  type TrackDef,
   type TrackId,
 } from '@deathtrack/shared';
 import {
@@ -60,6 +63,11 @@ import {
   BrowserWarning,
 } from './ui/BrowserWarning.js';
 import { MainMenu } from './ui/MainMenu.js';
+import { HUD, buildHudModel } from './ui/HUD.js';
+import { RaceResults } from './ui/RaceResults.js';
+import { InputHandler } from './InputHandler.js';
+import { RaceSession } from './race/RaceSession.js';
+import type { RenderState as RenderStateSnapshot } from './renderer/renderState.js';
 
 // ---------------------------------------------------------------------------
 // Injected collaborators (structural interfaces so fakes suffice in tests)
@@ -265,8 +273,29 @@ export class App {
 /** The track drawn as a boot-time preview to verify asset loading + rendering. */
 const DEFAULT_PREVIEW_TRACK: TrackId = 'orlando';
 
+/** The track a standalone single-player race runs on until career selection is wired. */
+const DEFAULT_RACE_TRACK: TrackId = 'orlando';
+
 /** Colour of the previewed track centerline (bright green, as in the RE PNGs). */
 const TRACK_PREVIEW_COLOR = 0x33ff66;
+
+/**
+ * Prize schedule for a standalone single-player race. Authored design data for
+ * the recreation (the original game's exact payout table is not recoverable
+ * from the shipped assets): placement prizes for a ten-car field plus a fixed
+ * per-elimination bonus, matching the shape the shared {@link computePrizeMoney}
+ * formula consumes. Index 0 is unused (placement is 1-based).
+ */
+const SINGLE_PLAYER_PRIZE_TABLE: PrizeTable = {
+  placementPrizes: [0, 10000, 6000, 4000, 2500, 1500, 1000, 750, 500, 250, 100],
+  eliminationBonus: 750,
+};
+
+/** Deterministic seed for the standalone single-player race. */
+const SINGLE_PLAYER_RACE_SEED = 0x5eed;
+
+/** The human player's display name for a standalone single-player race. */
+const SINGLE_PLAYER_NAME = 'Player';
 
 /**
  * Load a converted track through the runtime {@link BinaryAssetLoader} (over an
@@ -359,16 +388,158 @@ export async function bootstrap(
     },
   };
 
-  // Loop controller backed by the renderer's own render loop. The full GameLoop
-  // (fixed-step simulation + network) is wired when a race actually begins; at
-  // this top level we start/stop the presentation loop for the race state.
+  // --- Live single-player race wiring (task 25.13) ------------------------
+  //
+  // The App's overlay factories are zero-argument and cached, and its
+  // navigation events carry no data payload, so the per-race runtime state is
+  // threaded here through the bootstrap closure instead:
+  //   - `humanLoadout`   captured from the car-config screen at confirm time;
+  //   - `raceTrack`      the decoded TrackDef, preloaded best-effort below;
+  //   - `raceOverlay`    a stable Container that hosts the live HUD;
+  //   - `resultsOverlay` a stable Container repopulated with a RaceResults table
+  //                      when a race finishes;
+  //   - `raceSession`    the running RaceLoop driver, built when `race` begins.
+  //
+  // The human's keyboard inputs are sampled by a single InputHandler attached
+  // to the window for the lifetime of the app.
+
+  const inputHandler = new InputHandler();
+  inputHandler.attach();
+
+  // The human's chosen loadout. Defaults to a fresh hellcat so a race can start
+  // even if the player skips straight through car-config; overwritten with the
+  // player's actual selection when they confirm the car-config screen.
+  let humanLoadout: Loadout = emptyLoadout('hellcat');
+
+  // Best-effort preload of the race track. A missing/unservable asset must not
+  // stop the client from booting; the race falls back to a "track unavailable"
+  // notice in that case (see startRaceSession).
+  let raceTrack: TrackDef | null = null;
+  const trackLoad = decision.blockStart
+    ? Promise.resolve()
+    : new BinaryAssetLoader(new HttpAssetSource())
+        .loadTrack(DEFAULT_RACE_TRACK)
+        .then((t) => {
+          raceTrack = t;
+        })
+        .catch((err) => {
+          console.warn(
+            `[client] race track '${DEFAULT_RACE_TRACK}' unavailable: ${
+              err instanceof Error ? err.message : String(err)
+            }`,
+          );
+        });
+
+  // Stable overlay containers (reused across races so the App's overlay cache
+  // and the App.test single-construction contract both hold).
+  const raceOverlay = new Container();
+  raceOverlay.label = 'race';
+  const resultsOverlay = new Container();
+  resultsOverlay.label = 'raceResults';
+
+  let raceSession: RaceSession | null = null;
+  let raceHud: HUD | null = null;
+  let previousRenderState: RenderStateSnapshot | null = null;
+
+  // The App is referenced by the handlers below, which dispatch navigation
+  // events back into it. Factories run lazily (on first navigation), so by the
+  // time an overlay is constructed `app` is assigned.
+  let app: App;
+
+  // The car-config overlay is captured on first construction so the confirm
+  // handler can read the player's chosen loadout back out of it.
+  let carConfigOverlay: CarConfig | null = null;
+
+  /** Draw a centred one-line notice into a container (cleared first). */
+  const drawNotice = (container: Container, message: string): void => {
+    container.removeChildren().forEach((c) => c.destroy({ children: true }));
+    const style = new TextStyle({ fill: 0xffcc33, fontFamily: 'monospace', fontSize: 18 });
+    const text = new Text({ text: message, style });
+    text.position.set(40, 40);
+    container.addChild(text);
+  };
+
+  /**
+   * Begin a single-player race: build the {@link RaceSession} from the decoded
+   * track + the human's loadout, mount a fresh HUD into the race overlay, and
+   * reset the interpolation snapshot. No-op (with an on-screen notice) when the
+   * track failed to load.
+   */
+  const startRaceSession = (): void => {
+    raceOverlay.removeChildren().forEach((c) => c.destroy({ children: true }));
+    previousRenderState = null;
+
+    if (!raceTrack) {
+      raceSession = null;
+      raceHud = null;
+      drawNotice(raceOverlay, 'TRACK UNAVAILABLE — cannot start race');
+      return;
+    }
+
+    const session = new RaceSession({
+      track: raceTrack,
+      humanLoadout,
+      humanName: SINGLE_PLAYER_NAME,
+      inputSource: inputHandler,
+      seed: SINGLE_PLAYER_RACE_SEED,
+    });
+    raceSession = session;
+
+    const initialCar = session.humanCar;
+    if (initialCar) {
+      raceHud = new HUD(
+        buildHudModel(initialCar, humanLoadout, session.weaponConfigs, {
+          totalLaps: session.lapCount,
+        }),
+      );
+      raceOverlay.addChild(raceHud);
+    }
+  };
+
+  /** Populate the results overlay from the finished race's outcomes. */
+  const showResults = (): void => {
+    resultsOverlay.removeChildren().forEach((c) => c.destroy({ children: true }));
+    if (!raceSession) {
+      drawNotice(resultsOverlay, 'NO RACE RESULTS');
+      return;
+    }
+    const results = new RaceResults(raceSession.outcomes(), SINGLE_PLAYER_PRIZE_TABLE);
+    resultsOverlay.addChild(results);
+  };
+
+  // Loop controller backed by the renderer's render loop. Entering the `race`
+  // state builds the session and drives the fixed-step simulation from each
+  // presentation frame; leaving it stops the loop.
   const loop: LoopController = {
     start: () => {
-      // The fixed-step simulation + network stepping (via GameLoop) is wired per
-      // race as that flow is entered; at this top level we drive the renderer's
-      // presentation loop so the race scene is drawn each frame.
-      renderer.startRenderLoop(() => {
-        // Per-frame race stepping is attached when a race begins.
+      startRaceSession();
+      renderer.startRenderLoop((frame) => {
+        const session = raceSession;
+        if (!session) return;
+
+        // Advance the simulation the number of fixed steps this frame owes,
+        // then render an interpolated snapshot between the previous and current
+        // field, and refresh the HUD from the human's live car.
+        const current = session.stepAndSnapshot(frame.simulationSteps);
+        renderer.render(current, frame.alpha, previousRenderState ?? undefined, frame.deltaMs);
+        renderer.advanceFrameExplosions(frame.deltaMs);
+        previousRenderState = current;
+
+        const humanCar = session.humanCar;
+        if (raceHud && humanCar) {
+          raceHud.update(
+            buildHudModel(humanCar, session.humanLoadout, session.weaponConfigs, {
+              totalLaps: session.lapCount,
+            }),
+          );
+        }
+
+        // When the race resolves, populate the results table and advance the
+        // navigation flow (race -> results). syncLoop stops the loop for us.
+        if (session.finished) {
+          showResults();
+          app.dispatch('finishRace');
+        }
       });
     },
     stop: () => {
@@ -376,27 +547,20 @@ export async function bootstrap(
     },
   };
 
-  // The App is referenced by the main-menu handlers below, which dispatch
-  // navigation events back into it. Factories run lazily (on first navigation),
-  // so by the time `mainMenu` is constructed `app` is assigned.
-  let app: App;
-
   // Overlay factories. Each returns a PixiJS `Container`; overlays that extend
   // `Container` are returned directly, and `MainMenu` (which exposes a `.view`
   // container) is adapted. Factories are created lazily by the App on first
   // navigation, so unused screens never allocate.
   //
-  // `mainMenu` and `carConfig` are wired to real overlays: the main menu needs
-  // only navigation callbacks, and the car-config screen is driven by the
-  // authored gameplay catalogue (chassis/component/weapon defs in
-  // `@deathtrack/shared`) plus a fresh default loadout — no live session/race
-  // state is required to configure a car. The remaining screens each require
-  // live runtime data this boot-time entry point cannot truthfully provide yet,
-  // so they stay as documented placeholders until their flow is entered:
-  //   - lobby:     a live multiplayer Session (only exists after host/join)
-  //   - race:      per-frame CarRaceState for the HUD + the running sim/loop
-  //   - raceResults: the finishing ParticipantRaceOutcome[] + a PrizeTable
-  //   - career:    live CareerState (money, owned items, high-score table)
+  // `mainMenu`, `carConfig`, `lobby`, `race` and `raceResults` are wired to real
+  // overlays. `lobby` is a minimal single-player pre-race screen (the multiplayer
+  // Lobby overlay needs a live Session, which single-player has none of); it
+  // simply offers a START RACE action. `race` hosts the live HUD driven by the
+  // RaceSession, and `raceResults` shows the finishing table + prize money. The
+  // `race`/`raceResults` containers are stable and repopulated per race (see the
+  // loop controller + startRaceSession/showResults above).
+  //   - career:    live CareerState (money, owned items, high-score table) —
+  //                 still a Shop preview until the career runtime is wired.
   const overlays: OverlayFactories = {
     mainMenu: () => {
       const menu = new MainMenu({
@@ -413,8 +577,8 @@ export async function bootstrap(
       });
       return menu.view;
     },
-    carConfig: () =>
-      new CarConfig(
+    carConfig: () => {
+      const overlay = new CarConfig(
         {
           // A fresh player starts on the default chassis with nothing equipped
           // or owned (Req 5.10); the shop unlocks components/weapons over a
@@ -427,13 +591,21 @@ export async function bootstrap(
           ownedWeapons: [],
         },
         {
-          onConfirm: () => app.dispatch('enterLobby'),
+          onConfirm: () => {
+            // Capture the player's confirmed loadout so the race grid is built
+            // from the car they actually configured, then advance the flow.
+            humanLoadout = carConfigOverlay?.getInput().loadout ?? humanLoadout;
+            app.dispatch('enterLobby');
+          },
           onClose: () => app.dispatch('back'),
         },
-      ),
-    lobby: () => new Container(),
-    race: () => new Container(),
-    raceResults: () => new Container(),
+      );
+      carConfigOverlay = overlay;
+      return overlay;
+    },
+    lobby: () => buildPreRaceScreen(() => app.dispatch('startRace')),
+    race: () => raceOverlay,
+    raceResults: () => resultsOverlay,
     career: () =>
       // The career hub shows the Shop, driven by the authored catalogue and a
       // fresh career's starting balance. Affordability/shortfall are computed by
@@ -455,5 +627,56 @@ export async function bootstrap(
       new BrowserWarning(d.support.detected.name === 'Unknown' ? '' : currentUserAgent()),
   });
   app.start();
+  await trackLoad;
   return app;
+}
+
+// ---------------------------------------------------------------------------
+// Minimal single-player pre-race screen
+// ---------------------------------------------------------------------------
+
+/**
+ * A minimal single-player pre-race screen: a panel with a single START RACE
+ * button that invokes `onStart`. The multiplayer {@link import('./ui/Lobby.js').Lobby}
+ * overlay requires a live networked Session, which a single-player race has
+ * none of, so this stands in as an honest single-player launch point rather
+ * than fabricating a fake session.
+ */
+function buildPreRaceScreen(onStart: () => void): Container {
+  const root = new Container();
+  root.label = 'lobby';
+
+  const panel = new Graphics();
+  panel
+    .roundRect(0, 0, 360, 160, 8)
+    .fill({ color: 0x0a0a12, alpha: 0.92 })
+    .stroke({ color: 0x3355aa, width: 2 });
+  root.addChild(panel);
+
+  const title = new Text({
+    text: 'READY TO RACE',
+    style: new TextStyle({ fill: 0xffcc33, fontFamily: 'monospace', fontSize: 22, fontWeight: 'bold' }),
+  });
+  title.position.set(24, 20);
+  root.addChild(title);
+
+  const button = new Container();
+  button.label = 'lobby:startRace';
+  button.position.set(24, 90);
+  const bg = new Graphics();
+  bg.roundRect(0, 0, 312, 44, 6).fill(0x224488).stroke({ width: 2, color: 0x66aaff });
+  button.addChild(bg);
+  const caption = new Text({
+    text: 'START RACE',
+    style: new TextStyle({ fill: 0xffffff, fontFamily: 'monospace', fontSize: 16 }),
+  });
+  caption.anchor.set(0.5);
+  caption.position.set(156, 22);
+  button.addChild(caption);
+  button.eventMode = 'static';
+  button.cursor = 'pointer';
+  button.on('pointertap', onStart);
+  root.addChild(button);
+
+  return root;
 }
