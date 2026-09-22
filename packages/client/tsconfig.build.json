@@ -1,0 +1,19 @@
+{
+  // Library build: emit a Node-resolvable module tree to `dist/` so other
+  // workspace packages (and the integration tests) can import the client's
+  // pure modules by path, e.g. `@deathtrack/client/dist/network/NetworkManager.js`.
+  // This is separate from the vite web bundle (which builds to `dist-web/`).
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
+    "rootDir": "src",
+    "outDir": "dist",
+    "noEmit": false
+  },
+  "include": ["src"],
+  "exclude": ["dist", "dist-web", "node_modules", "src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__tests__/**"]
+}

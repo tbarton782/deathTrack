@@ -5,7 +5,9 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'es2022',
-    outDir: 'dist',
+    // The web bundle goes to `dist-web/`; `dist/` is reserved for the tsc
+    // library emit (see tsconfig.build.json) that other packages import by path.
+    outDir: 'dist-web',
   },
   resolve: {
     alias: {},

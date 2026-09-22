@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:lib && vite build",
+    "build:lib": "tsc -p tsconfig.build.json",
+    "build:web": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
