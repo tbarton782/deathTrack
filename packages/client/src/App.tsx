@@ -32,7 +32,14 @@
 // (block the loop on an unsupported browser).
 
 import { Container, Graphics } from 'pixi.js';
-import { BinaryAssetLoader, type TrackId } from '@deathtrack/shared';
+import {
+  BinaryAssetLoader,
+  CHASSIS_CATALOGUE,
+  COMPONENT_CATALOGUE,
+  WEAPON_CATALOGUE,
+  emptyLoadout,
+  type TrackId,
+} from '@deathtrack/shared';
 import {
   AppStateMachine,
   decideStartup,
@@ -45,6 +52,7 @@ import {
 } from './appState.js';
 import { HttpAssetSource } from './assets/HttpAssetSource.js';
 import { layoutTrackPreview } from './renderer/trackPreview.js';
+import { CarConfig } from './ui/CarConfig.js';
 import {
   currentUserAgent,
   BrowserWarning,
@@ -376,11 +384,13 @@ export async function bootstrap(
   // container) is adapted. Factories are created lazily by the App on first
   // navigation, so unused screens never allocate.
   //
-  // `mainMenu` is wired to the real overlay because it needs only navigation
-  // callbacks (no live game data). The remaining screens each require live
-  // runtime data that this boot-time entry point cannot truthfully provide yet,
+  // `mainMenu` and `carConfig` are wired to real overlays: the main menu needs
+  // only navigation callbacks, and the car-config screen is driven by the
+  // authored gameplay catalogue (chassis/component/weapon defs in
+  // `@deathtrack/shared`) plus a fresh default loadout — no live session/race
+  // state is required to configure a car. The remaining screens each require
+  // live runtime data this boot-time entry point cannot truthfully provide yet,
   // so they stay as documented placeholders until their flow is entered:
-  //   - carConfig: a live Loadout + chassis/component/weapon catalogues + owned lists
   //   - lobby:     a live multiplayer Session (only exists after host/join)
   //   - race:      per-frame CarRaceState for the HUD + the running sim/loop
   //   - raceResults: the finishing ParticipantRaceOutcome[] + a PrizeTable
@@ -401,7 +411,24 @@ export async function bootstrap(
       });
       return menu.view;
     },
-    carConfig: () => new Container(),
+    carConfig: () =>
+      new CarConfig(
+        {
+          // A fresh player starts on the default chassis with nothing equipped
+          // or owned (Req 5.10); the shop unlocks components/weapons over a
+          // career. The catalogues are the recreation's authored design data.
+          loadout: emptyLoadout('hellcat'),
+          chassisCatalogue: CHASSIS_CATALOGUE,
+          componentCatalogue: COMPONENT_CATALOGUE,
+          weaponCatalogue: WEAPON_CATALOGUE,
+          ownedComponents: [],
+          ownedWeapons: [],
+        },
+        {
+          onConfirm: () => app.dispatch('enterLobby'),
+          onClose: () => app.dispatch('back'),
+        },
+      ),
     lobby: () => new Container(),
     race: () => new Container(),
     raceResults: () => new Container(),

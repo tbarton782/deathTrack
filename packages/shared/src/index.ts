@@ -205,6 +205,13 @@ export {
   MASS_PER_ARMOR,
 } from './loadout/LoadoutService.js';
 
+export {
+  CHASSIS_CATALOGUE,
+  COMPONENT_CATALOGUE,
+  WEAPON_CATALOGUE,
+  findChassis,
+} from './catalogue/GameCatalogue.js';
+
 export type {
   Result,
   LoadoutError,
