@@ -213,6 +213,20 @@ export {
   findChassis,
 } from './catalogue/GameCatalogue.js';
 
+export {
+  RaceLoop,
+  buildStartingGrid,
+  GRID_SPACING,
+  AI_DRIVER_PROFILES,
+  AI_CHARACTER_ORDER,
+  aiProfileFor,
+  type RaceLoopConfig,
+  type RaceParticipant,
+  type ParticipantRaceOutcome,
+  type StartingGrid,
+  type BuildGridOptions,
+} from './race/index.js';
+
 export type {
   Result,
   LoadoutError,

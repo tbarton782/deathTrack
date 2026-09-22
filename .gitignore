@@ -13,6 +13,7 @@ ptsc.log
 # Tools diagnostics / generated asset previews (not source)
 packages/tools/out/
 packages/tools/tsc-check.txt
+out/
 
 # OS / editor cruft
 .DS_Store
