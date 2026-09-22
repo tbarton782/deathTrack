@@ -52,6 +52,23 @@ export interface HumanInputSource {
   sampleInputs(): CarInputs;
 }
 
+/**
+ * Real car-sprite assets for a race. When supplied, cars draw from the packed
+ * sprite atlas (real converted art); when absent, the renderer falls back to
+ * placeholder rectangles. All fields are required together.
+ */
+export interface RaceSprites {
+  /** The packed sprite atlas (frame table). */
+  readonly atlas: NonNullable<RenderState['atlas']>;
+  /** The PixiJS texture backing {@link atlas}. */
+  readonly atlasTexture: NonNullable<RenderState['atlasTexture']>;
+  /**
+   * Resolve the atlas frame key for a car by participant slot. Returning
+   * `undefined` leaves that car on the placeholder path.
+   */
+  readonly spriteIdFor: (participantId: ParticipantId) => string | undefined;
+}
+
 /** Options for constructing a {@link RaceSession}. */
 export interface RaceSessionOptions {
   /** The decoded track being raced (supplies grid + waypoint graph). */
@@ -66,6 +83,8 @@ export interface RaceSessionOptions {
   readonly lapCount?: number;
   /** Deterministic RNG seed for the race. */
   readonly seed?: number;
+  /** Optional real car-sprite atlas; omitted → placeholder cars. */
+  readonly sprites?: RaceSprites;
 }
 
 /**
@@ -91,15 +110,25 @@ export function buildRaceRenderState(
     readonly palette?: RenderState['palette'];
     readonly atlas?: RenderState['atlas'];
     readonly atlasTexture?: RenderState['atlasTexture'];
+    /**
+     * Resolve the atlas frame key for a car, so each car draws its real sprite.
+     * Returns `undefined` to leave a car on the renderer's placeholder path.
+     */
+    readonly spriteIdFor?: (participantId: ParticipantId) => string | undefined;
   } = {},
 ): RenderState {
-  const renderCars: RenderCar[] = cars.map((car) => ({
-    id: car.participantId,
-    position: { x: car.physics.position.x, y: car.physics.position.y },
-    heading: car.physics.heading,
-    airborneHeight: car.physics.airborneHeight,
-    eliminated: car.eliminated,
-  }));
+  const renderCars: RenderCar[] = cars.map((car) => {
+    const spriteId = options.spriteIdFor?.(car.participantId);
+    const rc: RenderCar = {
+      id: car.participantId,
+      position: { x: car.physics.position.x, y: car.physics.position.y },
+      heading: car.physics.heading,
+      airborneHeight: car.physics.airborneHeight,
+      eliminated: car.eliminated,
+      ...(spriteId !== undefined ? { spriteId } : {}),
+    };
+    return rc;
+  });
 
   const leader = pickCameraCar(cars);
   const cameraTarget = {
@@ -145,6 +174,7 @@ export class RaceSession {
   private readonly loop: RaceLoop;
   private readonly inputSource: HumanInputSource;
   private readonly loadout: Loadout;
+  private readonly sprites: RaceSprites | undefined;
   /** The weapon catalogue used this race (exposed for HUD model building). */
   readonly weaponConfigs = WEAPON_CONFIGS;
   /** Laps required to finish this race. */
@@ -153,6 +183,7 @@ export class RaceSession {
   constructor(options: RaceSessionOptions) {
     this.inputSource = options.inputSource;
     this.loadout = options.humanLoadout;
+    this.sprites = options.sprites;
     this.lapCount = Math.max(1, options.lapCount ?? options.track.lapCount);
 
     const grid = buildStartingGrid({
@@ -207,11 +238,23 @@ export class RaceSession {
     for (let i = 0; i < steps && !this.loop.finished; i++) {
       this.loop.step(inputs);
     }
-    return buildRaceRenderState(this.loop.cars);
+    return this.buildSnapshot();
   }
 
   /** A snapshot of the current field without advancing the simulation. */
   snapshot(): RenderState {
+    return this.buildSnapshot();
+  }
+
+  /** Build a RenderState snapshot, attaching the real sprite atlas when present. */
+  private buildSnapshot(): RenderState {
+    if (this.sprites) {
+      return buildRaceRenderState(this.loop.cars, {
+        atlas: this.sprites.atlas,
+        atlasTexture: this.sprites.atlasTexture,
+        spriteIdFor: this.sprites.spriteIdFor,
+      });
+    }
     return buildRaceRenderState(this.loop.cars);
   }
 

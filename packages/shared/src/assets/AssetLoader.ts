@@ -392,6 +392,45 @@ export class BinaryAssetLoader implements AssetLoader {
     const raw = decodeJsonPayload(container.payload);
     return { screen, data: toUint8Array(raw) };
   }
+
+  /**
+   * Load a converted colour palette container (`assets/palette/<name>.dtasset`),
+   * returning its `{ count, rgb }` shape (a flat RGB byte array). Used by the
+   * client to colourise 4-bpp sprite sheets. `name` defaults to the recovered
+   * EGA palette (`ACTIVISI`).
+   */
+  async loadPalette(name = 'ACTIVISI'): Promise<{ count: number; rgb: number[] }> {
+    const bytes = await this.source.readAsset(this.path(`palette/${name}.dtasset`));
+    const container = decodeContainer(bytes);
+    if (container.kind !== AssetKind.Palette) {
+      throw new Error(
+        `loadPalette("${name}"): unexpected asset kind ${container.kind} (expected Palette=${AssetKind.Palette})`,
+      );
+    }
+    const raw = decodeJsonPayload(container.payload) as { count?: number; rgb?: number[] };
+    if (!raw || !Array.isArray(raw.rgb)) {
+      throw new Error(`loadPalette("${name}"): payload is not a palette`);
+    }
+    return { count: raw.count ?? raw.rgb.length / 3, rgb: raw.rgb };
+  }
+
+  /**
+   * Load a sprite-sheet container by its raw asset stem
+   * (`assets/sprites/<stem>.dtasset`), returning the decoded JSON payload (the
+   * {@link SpriteSheetData}/bundle). Unlike {@link loadCarSprites} this does not
+   * assume a canonical {@link ChassisId} stem, so callers can load the real
+   * DOS-named sheets (e.g. `SLY`, `ANGEL`).
+   */
+  async loadSpriteSheetByStem(stem: string): Promise<SpriteSheetData> {
+    const bytes = await this.source.readAsset(this.path(`sprites/${stem}.dtasset`));
+    const container = decodeContainer(bytes);
+    if (container.kind !== AssetKind.SpriteSheet) {
+      throw new Error(
+        `loadSpriteSheetByStem("${stem}"): unexpected asset kind ${container.kind} (expected SpriteSheet=${AssetKind.SpriteSheet})`,
+      );
+    }
+    return decodeJsonPayload(container.payload) as SpriteSheetData;
+  }
 }
 
 /**

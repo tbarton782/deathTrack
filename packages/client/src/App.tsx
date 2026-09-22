@@ -65,7 +65,8 @@ import { MainMenu } from './ui/MainMenu.js';
 import { HUD, buildHudModel } from './ui/HUD.js';
 import { RaceResults } from './ui/RaceResults.js';
 import { InputHandler } from './InputHandler.js';
-import { RaceSession } from './race/RaceSession.js';
+import { RaceSession, type RaceSprites } from './race/RaceSession.js';
+import { loadRaceSprites } from './race/loadRaceSprites.js';
 import { CareerSession, CAREER_PRIZE_TABLE, type CareerPurchase } from './career/CareerSession.js';
 import type { RenderState as RenderStateSnapshot } from './renderer/renderState.js';
 
@@ -419,10 +420,11 @@ export async function bootstrap(
   // Best-effort preload of the race track. A missing/unservable asset must not
   // stop the client from booting; the race falls back to a "track unavailable"
   // notice in that case (see startRaceSession).
+  const assetSource = new HttpAssetSource();
   let raceTrack: TrackDef | null = null;
   const trackLoad = decision.blockStart
     ? Promise.resolve()
-    : new BinaryAssetLoader(new HttpAssetSource())
+    : new BinaryAssetLoader(assetSource)
         .loadTrack(DEFAULT_RACE_TRACK)
         .then((t) => {
           raceTrack = t;
@@ -433,6 +435,20 @@ export async function bootstrap(
               err instanceof Error ? err.message : String(err)
             }`,
           );
+        });
+
+  // Best-effort preload of the real car sprites: the converted competitor sheets
+  // packed into one atlas + texture. When unavailable (assets not served) the
+  // race renders with the renderer's placeholder cars — no crash.
+  let raceSprites: RaceSprites | null = null;
+  const spriteLoad = decision.blockStart
+    ? Promise.resolve()
+    : loadRaceSprites(assetSource)
+        .then((s) => {
+          raceSprites = s;
+        })
+        .catch(() => {
+          /* best-effort: placeholder cars */
         });
 
   // Stable overlay containers (reused across races so the App's overlay cache
@@ -550,6 +566,7 @@ export async function bootstrap(
       humanName: SINGLE_PLAYER_NAME,
       inputSource: inputHandler,
       seed: SINGLE_PLAYER_RACE_SEED,
+      ...(raceSprites ? { sprites: raceSprites } : {}),
     });
     raceSession = session;
 
@@ -722,7 +739,7 @@ export async function bootstrap(
       new BrowserWarning(d.support.detected.name === 'Unknown' ? '' : currentUserAgent()),
   });
   app.start();
-  await Promise.all([trackLoad, careerLoad]);
+  await Promise.all([trackLoad, careerLoad, spriteLoad]);
   return app;
 }
 

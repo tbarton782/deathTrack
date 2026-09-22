@@ -89,6 +89,22 @@ describe('buildRaceRenderState', () => {
     expect(state.eliminations).toEqual([elim]);
   });
 
+  it('assigns each car a spriteId from spriteIdFor when provided', () => {
+    const cars = [car(0, 0, 0, 1), car(1, 5, 0, 2)];
+    const state = buildRaceRenderState(cars, {
+      spriteIdFor: (id) => (id === 0 ? 'PLAYER_0' : 'SLY_0'),
+    });
+    expect(state.cars.find((c) => c.id === 0)!.spriteId).toBe('PLAYER_0');
+    expect(state.cars.find((c) => c.id === 1)!.spriteId).toBe('SLY_0');
+  });
+
+  it('leaves spriteId undefined for cars the resolver returns undefined for', () => {
+    const state = buildRaceRenderState([car(0, 0, 0, 1)], {
+      spriteIdFor: () => undefined,
+    });
+    expect(state.cars[0]!.spriteId).toBeUndefined();
+  });
+
   it('places the human in slot 0', () => {
     expect(HUMAN_PARTICIPANT_ID).toBe(0);
   });
