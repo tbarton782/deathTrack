@@ -228,3 +228,12 @@ export const WEAPON_CATALOGUE: readonly WeaponDef[] = [
 export function findChassis(id: string): ChassisDef | undefined {
   return CHASSIS_CATALOGUE.find((c) => c.id === id);
 }
+
+/**
+ * The fixed starting money balance for a new career (Req 5.10). Authored design
+ * data — the original game's economy is not recoverable from its assets. Chosen
+ * so a fresh player can afford one or two of the cheaper components/weapons but
+ * must earn prize money for the higher tiers (the machine gun is 500, the
+ * terminator 3500 — see {@link WEAPON_CATALOGUE}).
+ */
+export const INITIAL_CAREER_MONEY = 2000;

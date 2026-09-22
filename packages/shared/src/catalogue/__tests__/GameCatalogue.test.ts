@@ -4,6 +4,7 @@ import {
   CHASSIS_CATALOGUE,
   COMPONENT_CATALOGUE,
   WEAPON_CATALOGUE,
+  INITIAL_CAREER_MONEY,
   findChassis,
 } from '../GameCatalogue.js';
 import {
@@ -11,8 +12,8 @@ import {
   emptyLoadout,
   STAT_MAXIMA,
 } from '../../loadout/LoadoutService.js';
-import type { ComponentDef, ComponentId } from '../../types/car.js';
-import type { WeaponSlot } from '../../types/primitives.js';
+import type { ComponentDef } from '../../types/car.js';
+import type { ComponentId, WeaponSlot } from '../../types/primitives.js';
 
 /** The legal weapon ids per slot (mirrors the loadout service's contract). */
 const WEAPONS_BY_SLOT: Record<WeaponSlot, readonly string[]> = {
@@ -133,5 +134,21 @@ describe('WEAPON_CATALOGUE', () => {
       const dealsDamage = w.damage > 0 || (w.beamDPS !== null && w.beamDPS > 0);
       expect(dealsDamage).toBe(true);
     }
+  });
+});
+
+describe('INITIAL_CAREER_MONEY', () => {
+  it('is a positive whole number that affords the cheapest but not the priciest item (Req 5.10)', () => {
+    expect(Number.isInteger(INITIAL_CAREER_MONEY)).toBe(true);
+    expect(INITIAL_CAREER_MONEY).toBeGreaterThan(0);
+    const prices = [
+      ...COMPONENT_CATALOGUE.map((c) => c.price),
+      ...WEAPON_CATALOGUE.map((w) => w.price),
+    ];
+    const cheapest = Math.min(...prices);
+    const priciest = Math.max(...prices);
+    expect(INITIAL_CAREER_MONEY).toBeGreaterThanOrEqual(cheapest);
+    // Progression matters: a fresh player cannot buy the single most expensive item.
+    expect(INITIAL_CAREER_MONEY).toBeLessThan(priciest);
   });
 });

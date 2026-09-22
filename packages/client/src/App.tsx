@@ -37,6 +37,7 @@ import {
   CHASSIS_CATALOGUE,
   COMPONENT_CATALOGUE,
   WEAPON_CATALOGUE,
+  INITIAL_CAREER_MONEY,
   emptyLoadout,
   type TrackId,
 } from '@deathtrack/shared';
@@ -53,6 +54,7 @@ import {
 import { HttpAssetSource } from './assets/HttpAssetSource.js';
 import { layoutTrackPreview } from './renderer/trackPreview.js';
 import { CarConfig } from './ui/CarConfig.js';
+import { Shop } from './ui/Shop.js';
 import {
   currentUserAgent,
   BrowserWarning,
@@ -432,7 +434,16 @@ export async function bootstrap(
     lobby: () => new Container(),
     race: () => new Container(),
     raceResults: () => new Container(),
-    career: () => new Container(),
+    career: () =>
+      // The career hub shows the Shop, driven by the authored catalogue and a
+      // fresh career's starting balance. Affordability/shortfall are computed by
+      // the overlay from `money`; the full purchase -> persist -> next-race loop
+      // is owned by the CareerController and wired when a career actually runs,
+      // so at this entry point a purchase is a no-op log rather than a fake
+      // balance mutation.
+      new Shop(COMPONENT_CATALOGUE, WEAPON_CATALOGUE, INITIAL_CAREER_MONEY, (item) => {
+        console.info(`[client] shop purchase intent: ${item.id} (career runtime not yet wired)`);
+      }),
   };
 
   app = new App({

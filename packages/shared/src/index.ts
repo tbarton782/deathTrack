@@ -209,6 +209,7 @@ export {
   CHASSIS_CATALOGUE,
   COMPONENT_CATALOGUE,
   WEAPON_CATALOGUE,
+  INITIAL_CAREER_MONEY,
   findChassis,
 } from './catalogue/GameCatalogue.js';
 
