@@ -31,7 +31,8 @@
 // Requirements: 13.1 (modern browser), 13.3 (menu → race navigation), 13.6
 // (block the loop on an unsupported browser).
 
-import { Container } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
+import { BinaryAssetLoader, type TrackId } from '@deathtrack/shared';
 import {
   AppStateMachine,
   decideStartup,
@@ -42,6 +43,8 @@ import {
   type ScreenId,
   type StartupDecision,
 } from './appState.js';
+import { HttpAssetSource } from './assets/HttpAssetSource.js';
+import { layoutTrackPreview } from './renderer/trackPreview.js';
 import {
   currentUserAgent,
   BrowserWarning,
@@ -245,6 +248,50 @@ export class App {
 }
 
 // ---------------------------------------------------------------------------
+// Track-preview launch verification (task 25.14)
+// ---------------------------------------------------------------------------
+
+/** The track drawn as a boot-time preview to verify asset loading + rendering. */
+const DEFAULT_PREVIEW_TRACK: TrackId = 'orlando';
+
+/** Colour of the previewed track centerline (bright green, as in the RE PNGs). */
+const TRACK_PREVIEW_COLOR = 0x33ff66;
+
+/**
+ * Load a converted track through the runtime {@link BinaryAssetLoader} (over an
+ * {@link HttpAssetSource} fetching from the client's `public/` assets) and draw
+ * its `roadSegments` centerline as a top-down polyline on the renderer's
+ * track-boundaries layer.
+ *
+ * This is the honest end-to-end check for task 25.14: a real converted
+ * `.TRK` → `TrackDef` is fetched, decoded (magic/CRC/kind/JSON) and its decoded
+ * geometry is drawn to the canvas. It is a static top-down preview, not the
+ * in-race scanline scene, and is intentionally best-effort: if the asset is not
+ * present the caller logs and the client boots normally.
+ */
+async function drawTrackPreview(
+  renderer: { getLayer(name: 'trackBoundaries'): Container; canvas: { width: number; height: number } },
+  trackId: TrackId,
+): Promise<void> {
+  const loader = new BinaryAssetLoader(new HttpAssetSource());
+  const track = await loader.loadTrack(trackId);
+
+  const width = renderer.canvas.width || 640;
+  const height = renderer.canvas.height || 480;
+  const layout = layoutTrackPreview(track.roadSegments, { width, height, padding: 24 });
+  if (layout.points.length < 2) return;
+
+  const g = new Graphics();
+  const [first, ...rest] = layout.points;
+  g.moveTo(first!.x, first!.y);
+  for (const p of rest) g.lineTo(p.x, p.y);
+  if (layout.closed) g.lineTo(first!.x, first!.y);
+  g.stroke({ width: 2, color: TRACK_PREVIEW_COLOR });
+
+  renderer.getLayer('trackBoundaries').addChild(g);
+}
+
+// ---------------------------------------------------------------------------
 // Browser-only bootstrap (NOT unit-tested — needs WebGL + DOM)
 // ---------------------------------------------------------------------------
 
@@ -276,6 +323,20 @@ export async function bootstrap(
   const renderer = new Renderer();
   await renderer.init({ width: 640, height: 480, background: 0x000000 });
   mountPoint.appendChild(renderer.canvas);
+
+  // Launch verification (task 25.14): on a supported browser, load a real
+  // converted track through the runtime asset loader and draw its centerline as
+  // a top-down preview. This proves the decoded `.TRK` geometry loads and
+  // renders end-to-end. It is best-effort — a missing/unservable asset must not
+  // stop the client from booting — and is a static preview, distinct from the
+  // in-race scanline scene wired per race.
+  if (!decision.blockStart) {
+    void drawTrackPreview(renderer, DEFAULT_PREVIEW_TRACK).catch((err) => {
+      console.warn(
+        `[client] track preview skipped: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    });
+  }
 
   const stage = renderer.application.stage;
   const host: ScreenHost = {

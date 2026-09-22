@@ -32,3 +32,8 @@ dtrack/
 *.TBL
 *.MAP
 *.MUS
+
+# Converted game assets are derived from the copyrighted originals, so they are
+# generated locally (deathtrack-tools --real <dtrack> packages/client/public)
+# and served from public/ at runtime, never committed.
+packages/client/public/assets/
