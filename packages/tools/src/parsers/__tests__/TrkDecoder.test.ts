@@ -35,8 +35,13 @@ const TRACK_FILES = [
   'ST_LOUIS.TRK',
 ];
 
-/** Tracks whose road path traces a full closed loop covering ~the whole body. */
-const FULL_LOOP_TRACKS = new Set(['ORLANDO.TRK', 'PHOENIX.TRK', 'ST_LOUIS.TRK']);
+/**
+ * Every track's road path traces a full closed loop covering all but a small
+ * (<= 8 byte) terminator. This holds for all 10 once the profile column is
+ * identified per track (it is `col1` for 8 tracks but `col0` for BAY_AREA and
+ * ST_LOUIS); see {@link decodeTrk}.
+ */
+const FULL_LOOP_TRACKS = new Set(TRACK_FILES);
 
 async function readTrack(name: string): Promise<Uint8Array | undefined> {
   try {
@@ -149,16 +154,32 @@ describe('decodeTrk against all 10 real tracks', () => {
     if (checked > 0) expect(checked).toBe(TRACK_FILES.length);
   });
 
-  it('traces a full closed circuit for the single-section tracks', async () => {
+  it('traces a full closed circuit for every track', async () => {
     for (const name of FULL_LOOP_TRACKS) {
       const bytes = await readTrack(name);
       if (bytes === undefined) continue;
       const track = decodeTrk(bytes);
-      // These tracks' road path covers all but a tiny terminator (<= 8 bytes)
+      // Every track's road path covers all but a tiny terminator (<= 8 bytes)
       // and forms a large closed loop that returns near its start.
       expect(track.tail.length).toBeLessThanOrEqual(8);
       expect(track.roadPath.length).toBeGreaterThan(500);
       expect(track.roadPathClosed).toBe(true);
+    }
+  });
+
+  it('gives every track a smooth profile column (the smallest-span axis)', async () => {
+    for (const name of TRACK_FILES) {
+      const bytes = await readTrack(name);
+      if (bytes === undefined) continue;
+      const track = decodeTrk(bytes);
+      // Skip the two lead-in preamble records; the body profile drifts smoothly
+      // (a curvature / banking / elevation term), staying within a tight band
+      // while the two ground axes sweep thousands of units.
+      const profiles = track.roadPath.slice(2).map((p) => p.profile);
+      const min = Math.min(...profiles);
+      const max = Math.max(...profiles);
+      // Verified band across all 10 real tracks: well under 1000 units.
+      expect(max - min).toBeLessThan(1000);
     }
   });
 });

@@ -14,22 +14,26 @@
  * - it begins with a short run of 4-byte **`(dx, distance)` pairs** — a small
  *   signed lateral offset paired with a rising `distance`. This is a lead-in
  *   **centerline / curvature profile** preamble.
- * - the bulk of the body is the **road path**: an array of 6-byte
- *   `[x, profile, z]` records tracing the track's centerline as a 2-D polyline.
- *   Between consecutive records exactly one of `x`/`z` advances by a small
- *   amount (~±30) while the other holds; a corner is where the advancing axis
- *   switches. The `profile` middle column varies smoothly along the track
- *   (a curvature / banking / elevation term — named neutrally as its exact
- *   meaning is unconfirmed). Rendering the `(x, z)` polyline produces a
- *   recognisable **closed race circuit** (verified: ORLANDO, PHOENIX and
- *   ST_LOUIS trace complete loops covering all but a 4-byte terminator; the
- *   other tracks trace a valid partial loop before an additional section).
+ * - the bulk of the body is the **road path**: an array of 6-byte records of
+ *   three int16 columns, tracing the track's centerline. Two of the columns are
+ *   the ground plane (`x`, `z`) and the third is a smoothly-varying **profile**
+ *   term (curvature / banking / elevation — named neutrally as its exact
+ *   meaning is unconfirmed). Verified across all 10 tracks, each step changes at
+ *   **most one** column by more than ~±40: a straight run advances one ground
+ *   axis, a corner switches to the other, and the profile drifts smoothly. The
+ *   profile is **not** in a fixed column — it is `col1` for 8 tracks but `col0`
+ *   for BAY_AREA and ST_LOUIS — so it is identified as the smallest-span column
+ *   (it stays within a ~40–200 band while the ground axes sweep thousands of
+ *   units). Rendering the `(x, z)` polyline produces a recognisable **closed
+ *   race circuit** for all 10 tracks, covering all but a 2–4-byte terminator.
  *
- * What is **not** decoded (deliberately left raw): some tracks carry further
- * data after the first traced loop (a second lap/section, pit lane, jump ramps,
- * hazard zones, scenery, or the AI waypoint graph — `research/dynamix-formats.md`
- * §7.1). Those layouts could not be confirmed without inventing structure
- * (which the format notes forbid), so anything past the traced road path is
+ * What is **not** decoded (deliberately left raw): the exact meaning of the
+ * profile column, and any per-segment attributes (pit lane, jump ramps, hazard
+ * zones, scenery, AI waypoint graph — `research/dynamix-formats.md` §7.1). No
+ * separate section follows the road path (the tail is only a 2–4-byte
+ * terminator for every track), so those attributes, if present, are encoded
+ * within the records; they could not be confirmed without inventing structure
+ * (which the format notes forbid). Anything past the traced road path is
  * exposed as an opaque `tail` and via the raw int16 stream. The decoder always
  * parses every track without error.
  *
@@ -58,18 +62,20 @@ export interface CenterlinePoint {
 }
 
 /**
- * A single road-path point: a 6-byte `[x, profile, z]` record. `x` and `z` are
- * the centerline position on the ground plane; between consecutive points
- * exactly one of them advances by a small step while the other holds. `profile`
- * is a smoothly-varying per-point term (curvature / banking / elevation) whose
- * exact meaning is unconfirmed, so it is named neutrally.
+ * A single road-path point decoded from a 6-byte three-column record. `x` and
+ * `z` are the centerline position on the ground plane (the two large-span
+ * columns); between consecutive points exactly one of them advances by a small
+ * step while the other holds. `profile` is the smoothly-varying smallest-span
+ * column (curvature / banking / elevation) whose exact meaning is unconfirmed,
+ * so it is named neutrally. The profile's source column varies per track; see
+ * {@link extractRoadPath}.
  */
 export interface RoadPathPoint {
-  /** Centerline X coordinate. */
+  /** Centerline X coordinate (a ground-plane column). */
   x: number;
   /** Smoothly-varying profile term (curvature / banking / elevation). */
   profile: number;
-  /** Centerline Z coordinate. */
+  /** Centerline Z coordinate (a ground-plane column). */
   z: number;
 }
 
@@ -127,6 +133,14 @@ const MAX_PATH_STEP = 40;
  * unambiguous.
  */
 const LOOP_CLOSE_DISTANCE = 100;
+
+/**
+ * Number of lead-in records at the start of the road path that are a
+ * header/transition rather than loop geometry. Verified across all 10 real
+ * tracks: the first record holds a large value in one column and the second is
+ * a transition; the traced loop body begins at this index and returns near it.
+ */
+const PATH_PREAMBLE_RECORDS = 2;
 
 /**
  * Read a signed little-endian int16 at `offset`.
@@ -207,12 +221,19 @@ export function decodeTrk(fileBytes: Uint8Array): TrackData {
 }
 
 /**
- * Decode the road-path polyline of `[x, profile, z]` records starting at the
- * centerline end. Walks records while the ground position `(x, z)` advances
- * smoothly: at each step exactly one of `x`/`z` moves by up to
- * {@link MAX_PATH_STEP} while the other stays close, so a straight run advances
- * one axis and a corner switches axes. The walk stops when *both* axes jump
- * (past the path) or the record would run off the buffer.
+ * Decode the road-path polyline starting at the centerline end.
+ *
+ * Each record is a raw `[a, b, c]` triple of little-endian int16s. Verified
+ * across all 10 real tracks, a valid step changes **at most one** of the three
+ * columns by more than {@link MAX_PATH_STEP}: two columns are the ground plane
+ * (each advancing one at a time — a straight run advances one, a corner
+ * switches to the other) and the third is a smoothly-varying **profile** term.
+ *
+ * The profile does not occupy a fixed column: it is `col1` for 8 tracks but
+ * `col0` for BAY_AREA and ST_LOUIS. It is identified structurally as the
+ * **smallest-span column** — while the two ground axes sweep thousands of
+ * units, the profile stays in a tight band (~40–200 units). The other two
+ * columns become `x` and `z`, preserving their original column order.
  *
  * @returns The path points, its start/end byte offsets, and whether the path
  *   closes back near its origin (a full circuit).
@@ -221,62 +242,99 @@ function extractRoadPath(
   bytes: Uint8Array,
   from: number,
 ): { path: RoadPathPoint[]; start: number; end: number; closed: boolean } {
-  const readPoint = (o: number): RoadPathPoint => ({
-    x: readI16(bytes, o),
-    profile: readI16(bytes, o + 2),
-    z: readI16(bytes, o + 4),
-  });
+  const readTriple = (o: number): [number, number, number] => [
+    readI16(bytes, o),
+    readI16(bytes, o + 2),
+    readI16(bytes, o + 4),
+  ];
 
-  // Walk a smooth [x, profile, z] polyline from byte offset `o0`: successive
-  // points advance one ground axis at a time by a small step. Returns the
-  // points and the byte offset just past them.
-  const walkFrom = (o0: number): { pts: RoadPathPoint[]; end: number } => {
-    const pts: RoadPathPoint[] = [];
-    if (o0 + 6 > bytes.length) return { pts, end: o0 };
-    let prev = readPoint(o0);
-    pts.push(prev);
+  // Walk a generic [a, b, c] polyline from byte offset `o0`: a valid step
+  // changes at most one column by more than MAX_PATH_STEP (one ground axis
+  // advances, or a corner switches axes; the profile changes smoothly). A step
+  // that jumps two or more columns at once, or jumps any column absurdly far,
+  // marks the end of the polyline.
+  const walkFrom = (o0: number): { triples: [number, number, number][]; end: number } => {
+    const triples: [number, number, number][] = [];
+    if (o0 + 6 > bytes.length) return { triples, end: o0 };
+    let prev = readTriple(o0);
+    triples.push(prev);
     let o = o0 + 6;
     while (o + 6 <= bytes.length) {
-      const p = readPoint(o);
-      const dx = Math.abs(p.x - prev.x);
-      const dz = Math.abs(p.z - prev.z);
-      // A smooth step advances (at most) one ground axis by a small amount, so
-      // the *smaller* of the two deltas stays tiny. A big jump on both axes at
-      // once marks the end of the polyline.
-      if (Math.min(dx, dz) > MAX_PATH_STEP) break;
-      if (dx > 4000 || dz > 4000) break;
-      pts.push(p);
+      const p = readTriple(o);
+      const d0 = Math.abs(p[0] - prev[0]);
+      const d1 = Math.abs(p[1] - prev[1]);
+      const d2 = Math.abs(p[2] - prev[2]);
+      const bigCols = (d0 > MAX_PATH_STEP ? 1 : 0) + (d1 > MAX_PATH_STEP ? 1 : 0) + (d2 > MAX_PATH_STEP ? 1 : 0);
+      if (bigCols > 1) break;
+      if (d0 > 4000 || d1 > 4000 || d2 > 4000) break;
+      triples.push(p);
       prev = p;
       o += 6;
     }
-    return { pts, end: o };
+    return { triples, end: o };
   };
 
   // A short transition (a handful of int16s) can sit between the centerline
   // preamble and the true start of the road-path records, and the record phase
   // (even vs odd int16 alignment) can shift. Search a small window of candidate
   // start offsets and keep the one that yields the longest polyline.
-  let best: { pts: RoadPathPoint[]; end: number; start: number } = {
-    pts: [],
+  let best: { triples: [number, number, number][]; end: number; start: number } = {
+    triples: [],
     end: from,
     start: from,
   };
   const limit = Math.min(from + 64, bytes.length);
   for (let o = from; o + 6 <= limit; o += 2) {
-    const { pts, end } = walkFrom(o);
-    if (pts.length > best.pts.length) best = { pts, end, start: o };
+    const { triples, end } = walkFrom(o);
+    if (triples.length > best.triples.length) best = { triples, end, start: o };
   }
 
-  const path = best.pts;
-  const first = path[0];
+  const path = assignColumns(best.triples);
+  // The loop's true origin is the first *body* record: the two lead-in records
+  // are a header/transition (one column carries a large value that would
+  // otherwise inflate the closure gap). Verified across all 10 tracks, the body
+  // starts at index PATH_PREAMBLE_RECORDS and the last point returns near it.
+  const loopStart = path[PATH_PREAMBLE_RECORDS];
   const last = path[path.length - 1];
   let closed = false;
-  if (first !== undefined && last !== undefined && path.length > 8) {
-    const gap = Math.abs(first.x - last.x) + Math.abs(first.z - last.z);
+  if (loopStart !== undefined && last !== undefined && path.length > PATH_PREAMBLE_RECORDS + 8) {
+    const gap = Math.abs(loopStart.x - last.x) + Math.abs(loopStart.z - last.z);
     closed = gap <= LOOP_CLOSE_DISTANCE;
   }
 
   return { path, start: best.start, end: best.end, closed };
+}
+
+/**
+ * Assign column roles to raw `[a, b, c]` triples. The **profile** is the
+ * smallest-span column (it stays in a tight band while the two ground axes
+ * sweep thousands of units); the remaining two columns become `x` and `z` in
+ * their original column order. See {@link extractRoadPath}.
+ */
+function assignColumns(triples: [number, number, number][]): RoadPathPoint[] {
+  if (triples.length === 0) return [];
+  const spans = [0, 1, 2].map((c) => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (const t of triples) {
+      const v = t[c] as number;
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    return max - min;
+  });
+  // Profile = smallest-span column; the other two (in order) are x, z.
+  let profileCol = 0;
+  if ((spans[1] as number) < (spans[profileCol] as number)) profileCol = 1;
+  if ((spans[2] as number) < (spans[profileCol] as number)) profileCol = 2;
+  const groundCols = [0, 1, 2].filter((c) => c !== profileCol);
+  const xCol = groundCols[0] as number;
+  const zCol = groundCols[1] as number;
+  return triples.map((t) => ({
+    x: t[xCol] as number,
+    profile: t[profileCol] as number,
+    z: t[zCol] as number,
+  }));
 }
 
 /** Real filename (upper-case, no extension) → internal `trackId`. */
